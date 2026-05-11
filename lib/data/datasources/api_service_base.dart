@@ -1,10 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mobile_app_braket/domain/external_services/api_response.dart';
-
-abstract class TokenProvider {
-  String getToken();
-  String getUsername();
-}
+import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
 
 abstract class APIServiceBase {
   final Dio dio;
@@ -52,6 +48,19 @@ abstract class APIServiceBase {
       Options? options = _getOptionsWithAuthorization();
       Response<T> response = await dio.post(url, options: options, data: body);
       return APIResponse(statusCode: response.statusCode, body: deserialize(response.data));
+    } on DioException catch (error) {
+      return _handleError(error);
+    }
+  }
+
+  Future<APIResponse<T>> getAndDeserialize<T>(String url, T Function(dynamic json) deserialize) async {
+    try {
+      Options? options = _getOptionsWithAuthorization();
+      Response response = await dio.get(url, options: options);
+      return APIResponse(
+        statusCode: response.statusCode,
+        body: deserialize(response.data)
+      );
     } on DioException catch (error) {
       return _handleError(error);
     }
