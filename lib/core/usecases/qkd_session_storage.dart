@@ -1,7 +1,15 @@
 abstract class QkdSessionStorage {
-  void saveSessionId(String sesionId);
+  Future<void> saveSessionId(String sesionId);
 
-  String? getSessionId();
+  Future<String?> getSessionId();
 
-  void clear();
+  Future<void> saveSessionStatus(String status);
+
+  Future<String?> getSessionStatus();
+
+  Future<void> saveSessionExpiresAt(String expiresAt);
+
+  Future<String?> getSessionExpiresAt();
+
+  Future<void> clear();
 }

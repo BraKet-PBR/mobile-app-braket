@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app_braket/domain/external_services/api_response.dart';
 import 'package:mobile_app_braket/domain/external_services/login_service.dart';
 import 'package:mobile_app_braket/domain/models/login_dto.dart';
+import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 
 class LoginController extends ControllerBase {
 
-  final GetStorage storage;
+  final TokenProvider tokenProvider;
   final formKey = GlobalKey<FormState>();
   final LoginService loginService;
   final Rx<LoginDto> model = LoginDto().obs;
 
   bool isBusy = false;
 
-  LoginController({required this.storage, required this.loginService});
+  LoginController({required this.tokenProvider, required this.loginService});
 
 
   void login() async {
@@ -73,12 +73,12 @@ class LoginController extends ControllerBase {
       return;
     }
 
-    saveToken(apiResponse.body!);
+    await saveToken(apiResponse.body!);
   }
 
 
-  void saveToken(String token) {
-    storage.write('apiToken', token);
+  Future<void> saveToken(String token) async {
+    await tokenProvider.saveToken(token);
 
     Get.offAllNamed('/home');
   }

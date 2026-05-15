@@ -1,5 +1,6 @@
 abstract class TokenProvider {
-  bool isValid(String token);
-  String? getToken();
-  String? getUsername();
+  Future<bool> isValid(String token);
+  Future<String?> getToken();
+  Future<String?> getUsername();
+  Future<void> saveToken(String token);
 }
