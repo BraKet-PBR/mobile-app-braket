@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'qkd_session_response.dart';
+part of 'message_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-QkdSessionResponse _$QkdSessionResponseFromJson(Map<String, dynamic> json) =>
-    QkdSessionResponse(
-      sessionId: json['sessionId'] as String,
+MessageResponse _$MessageResponseFromJson(Map<String, dynamic> json) =>
+    MessageResponse(
+      messageId: json['messageId'] as String,
       status: json['status'] as String,
       expiresAt: json['expiresAt'] as String,
     );
 
-Map<String, dynamic> _$QkdSessionResponseToJson(QkdSessionResponse instance) =>
+Map<String, dynamic> _$MessageResponseToJson(MessageResponse instance) =>
     <String, dynamic>{
-      'sessionId': instance.sessionId,
+      'messageId': instance.messageId,
       'status': instance.status,
       'expiresAt': instance.expiresAt,
     };

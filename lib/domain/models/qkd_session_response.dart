@@ -5,10 +5,12 @@ part 'qkd_session_response.g.dart';
 @JsonSerializable()
 class QkdSessionResponse {
   final String sessionId;
+  final String status;
   final String expiresAt;
 
   QkdSessionResponse({
     required this.sessionId,
+    required this.status,
     required this.expiresAt,
   });
 

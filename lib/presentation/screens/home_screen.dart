@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                 height: 55,
 
                 child: ElevatedButton(
-                  onPressed: controller.startSession,
+                  onPressed: controller.initSession,
 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.red,
@@ -68,6 +68,97 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+
+                child: ElevatedButton(
+                  onPressed: controller.joinSession,
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.red,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+
+                  child: const Text(
+                    'Dołącz do sesji',
+
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed('/message');
+                  },
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.red,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+
+                  child: const Text(
+                    'Wyślij wiadomość',
+
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed('/pull-message');
+                  },
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.red,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+
+                  child: const Text(
+                    'Pobierz wiadomość',
+
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 32),
 
               Obx(() {
@@ -76,13 +167,24 @@ class HomeScreen extends StatelessWidget {
                   return const SizedBox.shrink();
                 }
 
-                return Text(
-                  'Drugi uczestnik: ${controller.otherUserId.value}',
-
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                return Column(
+                  children: [
+                    Text(
+                      'Drugi uczestnik: ${controller.otherUsername.value}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'ID: ${controller.otherUserId.value}',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 );
               }),
             ],

@@ -8,12 +8,12 @@ abstract class APIServiceBase {
 
   APIServiceBase(this.dio, {this.tokenProvider});
 
-  Options? _getOptionsWithAuthorization() {
+  Future<Options?> _getOptionsWithAuthorization() async {
     if (tokenProvider == null) {
       return null;
     }
 
-    String? token = tokenProvider?.getToken();
+    String? token = await tokenProvider?.getToken();
 
     if (token == null) {
       return null;
@@ -35,7 +35,7 @@ abstract class APIServiceBase {
 
   Future<APIResponse<T>> post<T>(String url, Map<String, dynamic> body) async {
     try {
-      Options? options = _getOptionsWithAuthorization();
+      Options? options = await _getOptionsWithAuthorization();
       Response<T> response = await dio.post(url, options: options, data: body);
       return APIResponse<T>(statusCode: response.statusCode!, body: response.data);
     } on DioException catch (error) {
@@ -45,7 +45,7 @@ abstract class APIServiceBase {
 
   Future<APIResponse<T>> postAndDeserialize<T>(String url, Map<String, dynamic> body, T Function(dynamic json) deserialize) async {
     try {
-      Options? options = _getOptionsWithAuthorization();
+      Options? options = await _getOptionsWithAuthorization();
       Response<T> response = await dio.post(url, options: options, data: body);
       return APIResponse(statusCode: response.statusCode, body: deserialize(response.data));
     } on DioException catch (error) {
@@ -55,7 +55,7 @@ abstract class APIServiceBase {
 
   Future<APIResponse<T>> getAndDeserialize<T>(String url, T Function(dynamic json) deserialize) async {
     try {
-      Options? options = _getOptionsWithAuthorization();
+      Options? options = await _getOptionsWithAuthorization();
       Response response = await dio.get(url, options: options);
       return APIResponse(
         statusCode: response.statusCode,
