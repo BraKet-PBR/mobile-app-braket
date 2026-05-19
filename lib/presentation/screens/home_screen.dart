@@ -63,36 +63,12 @@ class HomeScreen extends StatelessWidget {
                 height: 55,
 
                 child: ElevatedButton(
-                  onPressed: controller.initSession,
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.red,
-
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-
-                  child: const Text(
-                    'Rozpocznij sesję',
-
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-
-                child: ElevatedButton(
-                  onPressed: controller.joinSession,
+                  onPressed: () async {
+                    // try to obtain key from AES storage; fallback to placeholder
+                    final aes = Get.find<AESKeyStorage>();
+                    String? key = await aes.getKey();
+                    await controller.joinOrStartSession(keyHash: key ?? 'KEY_HASH');
+                  },
 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.red,
@@ -179,8 +155,13 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 32),
 
               Obx(() {
-
                 if (controller.otherUserId.value.isEmpty) {
+                  if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
+                    return const Text(
+                      'Oczekiwanie na drugiego użytkownika...',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    );
+                  }
                   return const SizedBox.shrink();
                 }
 

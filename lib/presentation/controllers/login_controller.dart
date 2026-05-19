@@ -72,12 +72,13 @@ class LoginController extends ControllerBase {
 
       formKey.currentState!.save();
 
-      if (apiUrlController.text.trim().isEmpty) {
-        await popup("Błąd", "Pole API URL jest wymagane");
-        return;
-      }
+      //TODO: odkomentować
+      // if (apiUrlController.text.trim().isEmpty) {
+      //   await popup("Błąd", "Pole API URL jest wymagane");
+      //   return;
+      // }
 
-      _saveUrl();
+      // _saveUrl(); 
 
       if (!await hasInternetConnection()){
         return;
@@ -89,6 +90,7 @@ class LoginController extends ControllerBase {
       await handleSomethingWentWrong(error);
     } finally {
       isBusy = false;
+      Get.offAllNamed('/home'); //TODO: delete - bypass logowania tylko na testy
     }
 
   }

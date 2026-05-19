@@ -79,7 +79,7 @@ class LoginScreen extends StatelessWidget {
                 TextFormField(
                   controller: controller.apiUrlController,
                   style: const TextStyle(color: Colors.white),
-                  validator: controller.apiUrlValidator,
+                  //validator: controller.apiUrlValidator, TODO: odkomentować to, walidacja tylko na testy wyłączona
                   decoration: InputDecoration(
                     hintText: 'API URL',
                     hintStyle: const TextStyle(color: Colors.white54),
