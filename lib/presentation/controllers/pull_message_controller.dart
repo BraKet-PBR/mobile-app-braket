@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
 import 'package:mobile_app_braket/domain/models/pull_message_dto.dart';
-import 'package:mobile_app_braket/domain/models/pull_message_response.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
 class PullMessageController extends ControllerBase {

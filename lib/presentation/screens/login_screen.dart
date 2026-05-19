@@ -77,6 +77,30 @@ class LoginScreen extends StatelessWidget {
 
 
                 TextFormField(
+                  controller: controller.apiUrlController,
+                  style: const TextStyle(color: Colors.white),
+                  validator: controller.apiUrlValidator,
+                  decoration: InputDecoration(
+                    hintText: 'API URL',
+                    hintStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(
+                      Icons.link,
+                      color: Colors.white70,
+                    ),
+                    filled: true,
+                    fillColor: AppColors.gray_light,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+
+
+                const SizedBox(height: 20),
+
+
+                TextFormField(
                   controller: passwordController,
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),

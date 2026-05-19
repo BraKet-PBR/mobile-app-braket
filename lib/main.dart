@@ -8,6 +8,8 @@ import 'package:mobile_app_braket/core/theme/app_colors.dart';
 
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage_impl.dart';
+import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
+import 'package:mobile_app_braket/core/usecases/api_url_storage_impl.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage_impl.dart';
 import 'package:mobile_app_braket/core/usecases/token_provider_impl.dart';
@@ -40,21 +42,36 @@ Future<void> main() async {
 
   await GetStorage.init();
 
+  final storage = const FlutterSecureStorage();
+
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'http://TODO',
+      baseUrl: '',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
     ),
   );
 
+  Get.put<FlutterSecureStorage>(storage);
+  Get.put<Dio>(dio);
+
+  Get.put<ApiUrlStorage>(
+    ApiUrlStorageImpl(storage),
+  );
+
+  final apiUrlStorage = Get.find<ApiUrlStorage>();
+  final savedApiUrl = await apiUrlStorage.getApiUrl();
+  if (savedApiUrl != null && savedApiUrl.isNotEmpty) {
+    dio.options.baseUrl = savedApiUrl;
+  }
+
 
   Get.put<TokenProvider>(
-    TokenProviderImpl(const FlutterSecureStorage()),
+    TokenProviderImpl(storage),
   );
 
   Get.put<QkdSessionStorage>(
-    QkdSessionStorageImpl(const FlutterSecureStorage()),
+    QkdSessionStorageImpl(storage),
   );
 
   Get.put<LoginService>(
@@ -80,13 +97,15 @@ Future<void> main() async {
   );
 
   Get.put<AESKeyStorage>(
-    AESKeyStorageImpl(const FlutterSecureStorage()),
+    AESKeyStorageImpl(storage),
   );
 
   Get.put(
     LoginController(
       tokenProvider: Get.find<TokenProvider>(),
       loginService: Get.find<LoginService>(),
+      apiUrlStorage: Get.find<ApiUrlStorage>(),
+      dio: Get.find<Dio>(),
     ),
   );
 

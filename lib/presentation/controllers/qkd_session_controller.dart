@@ -38,8 +38,7 @@ class QkdSessionController extends ControllerBase{
       final response = await qkdSessionService.initSession(
         InitSessionDto(
           keyHash: "KEY_HASH",
-          sessionNonce: "SESSION_NONCE"
-        )
+        ),
       );
 
       if (response.error != null){
@@ -82,7 +81,6 @@ class QkdSessionController extends ControllerBase{
       final response = await qkdSessionService.joinSession(
         JoinSessionDto(
           keyHash: "KEY_HASH",
-          sessionNonce: "SESSION_NONCE",
         ),
       );
 
