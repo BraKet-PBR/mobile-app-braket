@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
@@ -17,6 +19,11 @@ class QkdSessionController extends ControllerBase{
 
   final RxString otherUserId = ''.obs;
   final RxString otherUsername = ''.obs;
+  final RxString sessionStatus = ''.obs;
+
+  Timer? _pollTimer;
+  final Duration _pollInterval = const Duration(seconds: 3);
+  bool isPolling = false;
 
   bool isBusy = false;
 
@@ -54,6 +61,7 @@ class QkdSessionController extends ControllerBase{
       await qkdSessionStorage.saveSessionId(response.body!.sessionId);
       await qkdSessionStorage.saveSessionStatus(response.body!.status);
       await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
+      sessionStatus.value = response.body!.status;
 
       await fetchOtherUser();
     }
@@ -97,6 +105,7 @@ class QkdSessionController extends ControllerBase{
       await qkdSessionStorage.saveSessionId(response.body!.sessionId);
       await qkdSessionStorage.saveSessionStatus(response.body!.status);
       await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
+      sessionStatus.value = response.body!.status;
       await fetchOtherUser();
     }
     catch (error) {
@@ -110,21 +119,90 @@ class QkdSessionController extends ControllerBase{
   Future<void> fetchOtherUser() async {
     final response = await qkdSessionService.getOtherSessionUser();
 
+    // Jak serwer odpowie 404 to znaczy że nie ma drugiego usera w sesji!!!!
+    if (response.statusCode == 404) {
+      return;
+    }
+
     if (response.error != null) {
       await handleSomethingWentWrong(response.error);
       return;
     }
 
     if (response.body == null) {
-      await popup(
-        "Błąd",
-        "Nie udało się pobrać danych drugiego użytkownika.",
-      );
       return;
     }
 
     otherUserId.value = response.body!.userId;
     otherUsername.value = response.body!.username;
+    _stopPolling();
+  }
+
+  void _stopPolling() {
+    if (_pollTimer != null && _pollTimer!.isActive) {
+      _pollTimer!.cancel();
+    }
+    isPolling = false;
+  }
+
+  Future<void> joinOrStartSession({required String keyHash}) async {
+    if (isBusy) return;
+
+    try {
+      isBusy = true;
+
+      if (!await hasInternetConnection()) return;
+
+      final response = await qkdSessionService.joinSession(
+        JoinSessionDto(keyHash: keyHash),
+      );
+
+      if (response.error != null) {
+        await handleSomethingWentWrong(response.error);
+        return;
+      }
+
+      if (response.body == null) {
+        await popup("Nieoczekiwany Błąd", "Nie udało się dołączyć/utworzyć sesji.");
+        return;
+      }
+
+      await qkdSessionStorage.saveSessionId(response.body!.sessionId);
+      await qkdSessionStorage.saveSessionStatus(response.body!.status);
+      await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
+      sessionStatus.value = response.body!.status;
+
+      if (response.body!.status.toLowerCase() == 'waiting_peer') {
+        _startPolling();
+      } else {
+        await fetchOtherUser();
+      }
+    } catch (error) {
+      await handleSomethingWentWrong(error);
+    } finally {
+      isBusy = false;
+    }
+  }
+
+  void _startPolling() {
+    if (isPolling) return;
+    isPolling = true;
+
+    _pollTimer = Timer.periodic(_pollInterval, (timer) async {
+      // Check TTL
+      final expiresAt = await qkdSessionStorage.getSessionExpiresAt();
+      if (expiresAt != null) {
+        final expiry = DateTime.tryParse(expiresAt);
+        if (expiry != null && DateTime.now().isAfter(expiry)) {
+          // session expired
+          _stopPolling();
+          sessionStatus.value = 'expired';
+          return;
+        }
+      }
+
+      await fetchOtherUser();
+    });
   }
 
 
