@@ -6,6 +6,8 @@ import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
 
 class LoginController extends ControllerBase {
 
@@ -14,9 +16,44 @@ class LoginController extends ControllerBase {
   final LoginService loginService;
   final Rx<LoginDto> model = LoginDto().obs;
 
+  final ApiUrlStorage _apiUrlStorage;
+  final Dio _dio;
+  final TextEditingController apiUrlController = TextEditingController();
+
+  String? apiUrl;
+  late RegExp apiUrlRegex = RegExp(r'(https:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)(:\d+)?');
+
   bool isBusy = false;
 
-  LoginController({required this.tokenProvider, required this.loginService});
+  LoginController({required this.tokenProvider, required this.loginService, required ApiUrlStorage apiUrlStorage, required Dio dio}) : _apiUrlStorage = apiUrlStorage, _dio = dio;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadSavedApiUrl();
+  }
+
+  Future<void> _loadSavedApiUrl() async {
+    try{
+      final saved = await _apiUrlStorage.getApiUrl();
+      if (saved != null && saved.isNotEmpty) {
+        apiUrl = saved;
+        apiUrlController.text = saved;
+        _dio.options.baseUrl = saved;
+      }
+    } catch (_) {}
+  }
+
+  void _saveUrl() {
+    var url = apiUrlController.text.trim();
+    if (url.isEmpty) return;
+    if (!url.startsWith('http')) {
+      url = 'https://$url';
+    }
+    _apiUrlStorage.saveApiUrl(url);
+    _dio.options.baseUrl = url;
+    apiUrl = url;
+  }
 
 
   void login() async {
@@ -35,22 +72,26 @@ class LoginController extends ControllerBase {
 
       formKey.currentState!.save();
 
+      if (apiUrlController.text.trim().isEmpty) {
+        await popup("Błąd", "Pole API URL jest wymagane");
+        return;
+      }
+
+      _saveUrl();
+
       if (!await hasInternetConnection()){
         return;
       }
 
       var apiResponse = await loginService.login(model.value);
       await handleAPIResponse(apiResponse);
-    }
-    catch (error) {
+    } catch (error) {
       await handleSomethingWentWrong(error);
-    }
-    finally {
+    } finally {
       isBusy = false;
-      Get.offAllNamed('/home'); //TODO usunąć na testy nastepnych ekranów tytlko 
     }
-  }
 
+  }
 
   Future handleAPIResponse(APIResponse<String> apiResponse) async {
     if (apiResponse.error?.runtimeType == DioException) {
@@ -105,6 +146,21 @@ class LoginController extends ControllerBase {
     if (value.length > maxPasswordLen) {
       return "Hasło za długie.";
     }
+    return null;
+  }
+
+
+  String? apiUrlValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'API URL nie może być pusty';
+    }
+
+    final v = value.trim();
+    final match = apiUrlRegex.hasMatch(v);
+    if (!match) {
+      return 'Nieprawidłowy format adresu';
+    }
+
     return null;
   }
 

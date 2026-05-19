@@ -7,13 +7,7 @@ part of 'init_session_dto.dart';
 // **************************************************************************
 
 InitSessionDto _$InitSessionDtoFromJson(Map<String, dynamic> json) =>
-    InitSessionDto(
-      keyHash: json['keyHash'] as String,
-      sessionNonce: json['sessionNonce'] as String,
-    );
+    InitSessionDto(keyHash: json['keyHash'] as String);
 
 Map<String, dynamic> _$InitSessionDtoToJson(InitSessionDto instance) =>
-    <String, dynamic>{
-      'keyHash': instance.keyHash,
-      'sessionNonce': instance.sessionNonce,
-    };
+    <String, dynamic>{'keyHash': instance.keyHash};

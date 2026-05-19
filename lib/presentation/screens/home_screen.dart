@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/presentation/controllers/qkd_session_controller.dart';
+import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
+import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
+import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio/dio.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -25,7 +30,19 @@ class HomeScreen extends StatelessWidget {
               Icons.logout,
               color: AppColors.gray_light,
             ),
-            onPressed: () {
+            onPressed: () async {
+              final apiUrlStorage = Get.find<ApiUrlStorage>();
+              final qkdStorage = Get.find<QkdSessionStorage>();
+              final aesStorage = Get.find<AESKeyStorage>();
+              final flutterStorage = Get.find<FlutterSecureStorage>();
+              final dio = Get.find<Dio>();
+
+              await apiUrlStorage.clear();
+              await qkdStorage.clear();
+              await aesStorage.clear();
+              await flutterStorage.delete(key: 'apiToken');
+              dio.options.baseUrl = '';
+
               Get.offAllNamed('/login');
             },
           ),

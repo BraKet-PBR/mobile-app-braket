@@ -7,13 +7,7 @@ part of 'join_session_dto.dart';
 // **************************************************************************
 
 JoinSessionDto _$JoinSessionDtoFromJson(Map<String, dynamic> json) =>
-    JoinSessionDto(
-      keyHash: json['keyHash'] as String,
-      sessionNonce: json['sessionNonce'] as String,
-    );
+    JoinSessionDto(keyHash: json['keyHash'] as String);
 
 Map<String, dynamic> _$JoinSessionDtoToJson(JoinSessionDto instance) =>
-    <String, dynamic>{
-      'keyHash': instance.keyHash,
-      'sessionNonce': instance.sessionNonce,
-    };
+    <String, dynamic>{'keyHash': instance.keyHash};
