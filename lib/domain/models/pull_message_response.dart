@@ -6,12 +6,14 @@ part 'pull_message_response.g.dart';
 class PullMessageResponse {
   final String messageId;
   final String ciphertext;
+  final String messageNonce;
   final String algorithm;
   final String createdAt;
 
   PullMessageResponse({
     required this.messageId,
     required this.ciphertext,
+    required this.messageNonce,
     required this.algorithm,
     required this.createdAt,
   });

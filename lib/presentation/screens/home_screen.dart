@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/presentation/controllers/qkd_session_controller.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
@@ -79,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                   ),
 
                   child: const Text(
-                    'Dołącz do sesji',
+                    AppStrings.joinSession,
 
                     style: TextStyle(
                       fontSize: 18,
@@ -110,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                   ),
 
                   child: const Text(
-                    'Wyślij wiadomość',
+                    AppStrings.sendMessage,
 
                     style: TextStyle(
                       fontSize: 18,
@@ -141,7 +142,7 @@ class HomeScreen extends StatelessWidget {
                   ),
 
                   child: const Text(
-                    'Pobierz wiadomość',
+                    AppStrings.pullMessage,
 
                     style: TextStyle(
                       fontSize: 18,
@@ -158,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                 if (controller.otherUserId.value.isEmpty) {
                   if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
                     return const Text(
-                      'Oczekiwanie na drugiego użytkownika...',
+                      AppStrings.awaitingOtherPeer,
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     );
                   }
@@ -168,7 +169,7 @@ class HomeScreen extends StatelessWidget {
                 return Column(
                   children: [
                     Text(
-                      'Drugi uczestnik: ${controller.otherUsername.value}',
+                      AppStrings.otherUser(controller.otherUsername.value),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -176,7 +177,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'ID: ${controller.otherUserId.value}',
+                      AppStrings.otherUserId(controller.otherUserId.value),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,

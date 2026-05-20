@@ -13,4 +13,16 @@ class EncryptionServiceImpl implements EncryptionService {
     final nonce = base64UrlEncode(nonceBytes);
     return EncryptionResult(ciphertext: ciphertext, messageNonce: nonce);
   }
+
+  @override
+  Future<String> decrypt(String ciphertext, String key, String messageNonce) async {
+    // Placeholder
+    try {
+      final bytes = base64Decode(ciphertext);
+      final plaintext = utf8.decode(bytes);
+      return plaintext;
+    } catch (_) {
+      return '';
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/presentation/controllers/login_controller.dart';
 
@@ -27,7 +28,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {},
                     icon: const Icon(Icons.info_outline, color: Colors.white),
                     label: const Text(
-                      'Więcej informacji',
+                      AppStrings.moreInfo,
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -36,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                 const Spacer(),
 
                 const Text(
-                  '<BRAKET>',
+                  AppStrings.appName,
                   style: TextStyle(
                     fontSize: 42,
                     fontWeight: FontWeight.bold,
@@ -57,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                     controller.model.value.username = value;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Login',
+                    hintText: AppStrings.loginHint,
                     hintStyle: const TextStyle(color: Colors.white54),
                     prefixIcon: const Icon(
                       Icons.person_2_outlined,
@@ -81,7 +82,7 @@ class LoginScreen extends StatelessWidget {
                   style: const TextStyle(color: Colors.white),
                   //validator: controller.apiUrlValidator, TODO: odkomentować to, walidacja tylko na testy wyłączona
                   decoration: InputDecoration(
-                    hintText: 'API URL',
+                    hintText: AppStrings.apiUrlHint,
                     hintStyle: const TextStyle(color: Colors.white54),
                     prefixIcon: const Icon(
                       Icons.link,
@@ -109,7 +110,7 @@ class LoginScreen extends StatelessWidget {
                     controller.model.value.password = value;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Password',
+                    hintText: AppStrings.passwordHint,
                     hintStyle: const TextStyle(color: Colors.white54),
                     prefixIcon: const Icon(
                       Icons.lock_outlined,
@@ -140,7 +141,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Log in',
+                      AppStrings.loginButton,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

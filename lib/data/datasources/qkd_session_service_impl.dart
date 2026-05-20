@@ -12,7 +12,7 @@ class QkdSessionServiceImpl extends APIServiceBase implements QkdSessionService{
   @override
   Future<APIResponse<QkdSessionResponse>> initSession(InitSessionDto dto) {
     return postAndDeserialize(
-      "/api/qkdsessions/init",
+      "/api/qkdsessions/join",
       dto.toJson(),
       (json) => QkdSessionResponse.fromJson(json)
     );

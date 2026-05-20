@@ -129,6 +129,8 @@ Future<void> main() async {
     PullMessageController(
       messageService: Get.find<MessageService>(),
       qkdSessionStorage: Get.find<QkdSessionStorage>(),
+      encryptionService: Get.find<EncryptionService>(),
+      aesKeyStorage: Get.find<AESKeyStorage>(),
     ),
   );
 
