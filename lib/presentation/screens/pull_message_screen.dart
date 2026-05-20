@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/presentation/controllers/pull_message_controller.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
 
 class PullMessageScreen extends StatefulWidget {
   const PullMessageScreen({super.key});
@@ -25,7 +26,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
       backgroundColor: AppColors.gray,
       appBar: AppBar(
         backgroundColor: AppColors.red,
-        title: const Text('Pobierz wiadomość'),
+        title: const Text(AppStrings.pullMessageTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -43,7 +44,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Pobierz zaszyfrowaną wiadomość',
+                      AppStrings.pullEncryptedMessage,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -64,7 +65,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pobierz wiadomość',
+                          AppStrings.pullMessageButton,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -80,7 +81,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              'Otrzymana wiadomość:',
+                              AppStrings.receivedMessage,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -98,7 +99,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
-                                    'Message ID: ${controller.messageId.value}',
+                                    AppStrings.messageId(controller.messageId.value),
                                     style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 14,
@@ -106,7 +107,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Ciphertext: ${controller.ciphertext.value}',
+                                    AppStrings.messagePlaintext(controller.plaintext.value),
                                     style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 14,
@@ -114,7 +115,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Algorithm: ${controller.algorithm.value}',
+                                    AppStrings.messageAlgorithm(controller.algorithm.value),
                                     style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 14,
@@ -122,7 +123,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Created At: ${controller.createdAt.value}',
+                                    AppStrings.messageCreatedAt(controller.createdAt.value),
                                     style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 14,
@@ -133,7 +134,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Wiadomość zostanie usunięta po wyjściu z ekranu.',
+                              AppStrings.messageDeletionWarning,
                               style: const TextStyle(
                                 color: Color.fromRGBO(255, 255, 255, 0.8),
                                 fontSize: 13,

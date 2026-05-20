@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/domain/external_services/api_response.dart';
 import 'package:mobile_app_braket/domain/external_services/login_service.dart';
 import 'package:mobile_app_braket/domain/models/login_dto.dart';
@@ -74,11 +75,11 @@ class LoginController extends ControllerBase {
 
       //TODO: odkomentować
       // if (apiUrlController.text.trim().isEmpty) {
-      //   await popup("Błąd", "Pole API URL jest wymagane");
+      //   await popup(AppStrings.error, AppStrings.apiUrlEmpty);
       //   return;
       // }
 
-      // _saveUrl(); 
+      // _saveUrl();
 
       if (!await hasInternetConnection()){
         return;
@@ -97,7 +98,7 @@ class LoginController extends ControllerBase {
 
   Future handleAPIResponse(APIResponse<String> apiResponse) async {
     if (apiResponse.error?.runtimeType == DioException) {
-      popup("Błąd", "Serwer nie odpowiada.");
+      popup(AppStrings.error, AppStrings.serverNotResponding);
       return;
     }
 
@@ -112,7 +113,7 @@ class LoginController extends ControllerBase {
     }
 
     if (apiResponse.statusCode != 200){
-      await handleSomethingWentWrong("Logowanie nie powidoło się. Kod odpowiedzi serwera: $apiResponse.statusCode");
+      await handleSomethingWentWrong(AppStrings.loginServerError(apiResponse.statusCode ?? 0));
       return;
     }
 
@@ -130,10 +131,10 @@ class LoginController extends ControllerBase {
   String? usernameValidator(String? value) {
     const int maxUsernameLen = 250;
     if (value == null || value == ''){
-      return "Nazwa użytkownika nie może być pusta";
+      return AppStrings.usernameEmpty;
     }
     if (value.length > maxUsernameLen) {
-      return "Nazwa użytkownika za długa";
+      return AppStrings.usernameTooLong;
     }
     return null;
 
@@ -143,10 +144,10 @@ class LoginController extends ControllerBase {
   String? passwordValidator(String? value) {
     const int maxPasswordLen = 250;
     if (value == null || value == ''){
-      return "Hasło nie może być puste";
+      return AppStrings.passwordEmpty;
     }
     if (value.length > maxPasswordLen) {
-      return "Hasło za długie.";
+      return AppStrings.passwordTooLong;
     }
     return null;
   }
@@ -154,13 +155,13 @@ class LoginController extends ControllerBase {
 
   String? apiUrlValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'API URL nie może być pusty';
+      return AppStrings.apiUrlEmpty;
     }
 
     final v = value.trim();
     final match = apiUrlRegex.hasMatch(v);
     if (!match) {
-      return 'Nieprawidłowy format adresu';
+      return AppStrings.apiUrlInvalidFormat;
     }
 
     return null;
@@ -168,7 +169,7 @@ class LoginController extends ControllerBase {
 
 
   void showInvalidCredentialsError() {
-    popup("Błąd logowania", "Nieprawidłowy login lub hasło");
+    popup(AppStrings.loginErrorTitle, AppStrings.invalidCredentials);
   }
 
 }

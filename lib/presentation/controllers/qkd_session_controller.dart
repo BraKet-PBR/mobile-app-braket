@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
 import 'package:mobile_app_braket/domain/models/init_session_dto.dart';
@@ -54,7 +55,7 @@ class QkdSessionController extends ControllerBase{
       }
 
       if (response.body == null) {
-        await popup("Nieoczekiwany Błąd", "Nie udało się utworzyć sesji.");
+        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdCreateSessionFailed);
         return;
       }
 
@@ -98,7 +99,7 @@ class QkdSessionController extends ControllerBase{
       }
 
       if (response.body == null) {
-        await popup("Nieoczekiwany Błąd", "Nie udało się dołączyć do sesji.");
+        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinSessionFailed);
         return;
       }
 
@@ -163,7 +164,7 @@ class QkdSessionController extends ControllerBase{
       }
 
       if (response.body == null) {
-        await popup("Nieoczekiwany Błąd", "Nie udało się dołączyć/utworzyć sesji.");
+        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinOrCreateSessionFailed);
         return;
       }
 

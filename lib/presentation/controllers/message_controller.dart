@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/encryption_service.dart';
@@ -24,15 +25,15 @@ class MessageController extends ControllerBase {
   final RxString messageId = ''.obs;
   final RxString expiresAt = ''.obs;
 
-  bool isBusy = false;
+  final RxBool isBusy = false.obs;
 
   Future<void> sendMessage(String plaintext) async {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
 
     try {
-      isBusy = true;
+      isBusy.value = true;
 
       if (!await hasInternetConnection()) {
         return;
@@ -40,18 +41,18 @@ class MessageController extends ControllerBase {
 
       final sessionId = await qkdSessionStorage.getSessionId();
       if (sessionId == null || sessionId.isEmpty) {
-        await popup("Brak sesji", "Najpierw utwórz lub dołącz do sesji.");
+        await popup(AppStrings.messageNoSessionTitle, AppStrings.messageNoSessionMessage);
         return;
       }
 
       if (plaintext.isEmpty) {
-        await popup("Brak danych", "Uzupełnij tekst wiadomości.");
+        await popup(AppStrings.messageNoDataTitle, AppStrings.messageNoDataMessage);
         return;
       }
 
       final aesKey = await aesKeyStorage.getKey();
       if (aesKey == null || aesKey.isEmpty) {
-        await popup("Brak klucza AES", "Najpierw zapisz klucz AES w bezpiecznym magazynie.");
+        await popup(AppStrings.messageNoAesKeyTitle, AppStrings.messageNoAesKeyMessage);
         return;
       }
 
@@ -72,18 +73,18 @@ class MessageController extends ControllerBase {
       }
 
       if (response.body == null) {
-        await popup("Nieoczekiwany Błąd", "Nie udało się wysłać wiadomości.");
+        await popup(AppStrings.messageUnexpectedErrorTitle, AppStrings.sendMessageFailed);
         return;
       }
 
       messageId.value = response.body!.messageId;
       sendStatus.value = response.body!.status;
       expiresAt.value = response.body!.expiresAt;
-      await popup("Wysłano", "Wiadomość została zapisana jako pending.");
+      await popup(AppStrings.messageSentTitle, AppStrings.messagePendingSaved);
     } catch (error) {
       await handleSomethingWentWrong(error);
     } finally {
-      isBusy = false;
+      isBusy.value = false;
     }
   }
 }

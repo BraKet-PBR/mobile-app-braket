@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:mobile_app_braket/core/localization/app_strings.dart';
+import 'package:mobile_app_braket/core/theme/app_colors.dart';
 
 class ControllerBase extends GetxController {
   final Connectivity connectivity = Connectivity();
@@ -15,40 +17,71 @@ class ControllerBase extends GetxController {
       if (error.type == DioExceptionType.connectionTimeout ||
           error.type == DioExceptionType.sendTimeout ||
           error.type == DioExceptionType.receiveTimeout) {
-        message = "Nie udało się wysłać żądania, spróbuj ponownie później.";
+        message = AppStrings.requestFailed;
       } else if (error.type == DioExceptionType.unknown &&
           error.error is SocketException) {
-        message = "Nie udało się wysłać żądania, spróbuj ponownie później.";
+        message = AppStrings.requestFailed;
       } else {
-        message = "Coś poszło nie tak.";
+        message = AppStrings.somethingWentWrong;
       }
     } else {
-      message = "Coś poszło nie tak.";
+      message = AppStrings.somethingWentWrong;
     }
 
     await Sentry.captureException(error);
-    await popup("Błąd", message);
+    await popup(AppStrings.error, message);
   }
 
   Future<void> popup(String title, String message) async {
     await Get.defaultDialog(
-      backgroundColor: Colors.white,
-        title: title,
-        middleText: message,
-        confirm: ElevatedButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: const Text("Ok"),
-        ));
+      backgroundColor: AppColors.gray_light,
+      title: title,
+      titleStyle: const TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      middleText: message,
+      middleTextStyle: const TextStyle(
+        color: AppColors.white,
+      ),
+      confirm: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        onPressed: () {
+          Get.back();
+        },
+        child: const Text(
+          AppStrings.ok,
+          style: TextStyle(color: AppColors.white),
+        ),
+      ),
+    );
   }
 
   Future<bool> hasInternetConnection() async {
     if (!await hasInternetConnectionNoDialog()) {
       await Get.defaultDialog(
-          title: "Błąd",
-          middleText: "Brak połączenia z internetem",
-          confirm: const Text("Ok"));
+        title: AppStrings.error,
+        titleStyle: const TextStyle(
+          color: AppColors.black,
+          fontWeight: FontWeight.bold,
+        ),
+        middleText: AppStrings.noInternet,
+        middleTextStyle: const TextStyle(color: AppColors.white),
+        backgroundColor: AppColors.gray_light,
+        confirm: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.red),
+          onPressed: () => Get.back(),
+          child: const Text(
+            AppStrings.ok,
+            style: TextStyle(color: AppColors.white),
+          ),
+        ),
+      );
       return false;
     }
 
