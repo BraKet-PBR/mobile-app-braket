@@ -62,6 +62,52 @@ class ControllerBase extends GetxController {
     );
   }
 
+  Future<bool> confirm(String title, String message) async {
+    final result = await Get.defaultDialog<bool>(
+      backgroundColor: AppColors.gray_light,
+      title: title,
+      titleStyle: const TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      middleText: message,
+      middleTextStyle: const TextStyle(
+        color: AppColors.white,
+      ),
+      cancel: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.gray,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        onPressed: () {
+          Get.back(result: false);
+        },
+        child: const Text(
+          AppStrings.no,
+          style: TextStyle(color: AppColors.white),
+        ),
+      ),
+      confirm: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        onPressed: () {
+          Get.back(result: true);
+        },
+        child: const Text(
+          AppStrings.yes,
+          style: TextStyle(color: AppColors.white),
+        ),
+      ),
+    );
+    return result ?? false;
+  }
+
   Future<bool> hasInternetConnection() async {
     if (!await hasInternetConnectionNoDialog()) {
       await Get.defaultDialog(

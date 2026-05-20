@@ -33,12 +33,18 @@ class AppStrings {
   static const String pullMessageButton = "Pobierz wiadomość";
   static const String receivedMessage = "Otrzymana wiadomość";
   static const String messageDeletionWarning = "Wiadomość zostanie usunięta po wyjściu z ekranu.";
+  static const String messageExitConfirmTitle = "Opuszczenie ekranu";
+  static const String messageExitConfirmMessage = "Wyjście z ekranu spowoduje bezpowrotne usunięcie wiadomości.";
   static String messagePlaintext(String plaintext) => 'Plaintext: $plaintext';
   static String messageAlgorithm(String algorithm) => 'Algorytm: $algorithm';
   static String messageCreatedAt(String date) => 'Utworzono: $date';
 
   // controller_base.dart
   static const String ok = "Ok";
+  static const String yes = "Tak";
+  static const String no = "Nie";
+  static const String logoutConfirmTitle = "Wylogowanie";
+  static const String logoutConfirmMessage = "Czy na pewno chcesz się wylogować?";
   static const String error = "Błąd";
   static const String noInternet = "Brak połączenia z internetem";
   static const String requestFailed = "Nie udało się wysłać żądania, spróbuj ponownie później.";

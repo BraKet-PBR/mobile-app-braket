@@ -107,7 +107,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    AppStrings.messagePlaintext(controller.plaintext.value),
+                                    AppStrings.messagePlaintext(controller.ciphertext.value),
                                     style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 14,
