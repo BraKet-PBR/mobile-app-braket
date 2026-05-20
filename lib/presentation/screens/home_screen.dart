@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
+import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 import 'package:mobile_app_braket/presentation/controllers/qkd_session_controller.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
@@ -32,6 +33,15 @@ class HomeScreen extends StatelessWidget {
               color: AppColors.gray_light,
             ),
             onPressed: () async {
+              final shouldLogout = await ControllerBase().confirm(
+                AppStrings.logoutConfirmTitle,
+                AppStrings.logoutConfirmMessage,
+              );
+
+              if (!shouldLogout) {
+                return;
+              }
+
               final apiUrlStorage = Get.find<ApiUrlStorage>();
               final qkdStorage = Get.find<QkdSessionStorage>();
               final aesStorage = Get.find<AESKeyStorage>();

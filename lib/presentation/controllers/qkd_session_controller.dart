@@ -28,6 +28,46 @@ class QkdSessionController extends ControllerBase{
 
   bool isBusy = false;
 
+  Future<void> joinOrStartSession({required String keyHash}) async {
+    if (isBusy) return;
+
+    try {
+      isBusy = true;
+
+      if (!await hasInternetConnection()) return;
+
+      final response = await qkdSessionService.joinSession(
+        JoinSessionDto(keyHash: keyHash),
+      );
+
+      if (response.error != null) {
+        await handleSomethingWentWrong(response.error);
+        return;
+      }
+
+      if (response.body == null) {
+        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinOrCreateSessionFailed);
+        return;
+      }
+
+      await qkdSessionStorage.saveSessionId(response.body!.sessionId);
+      await qkdSessionStorage.saveSessionStatus(response.body!.status);
+      await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
+      sessionStatus.value = response.body!.status;
+
+      if (response.body!.status.toLowerCase() == 'waiting_peer') {
+        _startPolling();
+      } else {
+        await fetchOtherUser();
+      }
+    } catch (error) {
+      await handleSomethingWentWrong(error);
+    } finally {
+      isBusy = false;
+    }
+  }
+
+
   Future<void> initSession() async {
     
     if (isBusy) {
@@ -117,6 +157,7 @@ class QkdSessionController extends ControllerBase{
     }
   }
 
+
   Future<void> fetchOtherUser() async {
     final response = await qkdSessionService.getOtherSessionUser();
 
@@ -139,6 +180,7 @@ class QkdSessionController extends ControllerBase{
     _stopPolling();
   }
 
+
   void _stopPolling() {
     if (_pollTimer != null && _pollTimer!.isActive) {
       _pollTimer!.cancel();
@@ -146,44 +188,6 @@ class QkdSessionController extends ControllerBase{
     isPolling = false;
   }
 
-  Future<void> joinOrStartSession({required String keyHash}) async {
-    if (isBusy) return;
-
-    try {
-      isBusy = true;
-
-      if (!await hasInternetConnection()) return;
-
-      final response = await qkdSessionService.joinSession(
-        JoinSessionDto(keyHash: keyHash),
-      );
-
-      if (response.error != null) {
-        await handleSomethingWentWrong(response.error);
-        return;
-      }
-
-      if (response.body == null) {
-        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinOrCreateSessionFailed);
-        return;
-      }
-
-      await qkdSessionStorage.saveSessionId(response.body!.sessionId);
-      await qkdSessionStorage.saveSessionStatus(response.body!.status);
-      await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
-      sessionStatus.value = response.body!.status;
-
-      if (response.body!.status.toLowerCase() == 'waiting_peer') {
-        _startPolling();
-      } else {
-        await fetchOtherUser();
-      }
-    } catch (error) {
-      await handleSomethingWentWrong(error);
-    } finally {
-      isBusy = false;
-    }
-  }
 
   void _startPolling() {
     if (isPolling) return;
