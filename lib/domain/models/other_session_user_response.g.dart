@@ -11,6 +11,7 @@ OtherSessionUserResponse _$OtherSessionUserResponseFromJson(
 ) => OtherSessionUserResponse(
   userId: json['userId'] as String,
   username: json['username'] as String,
+  mayoKey: json['mayoKey'] as String,
 );
 
 Map<String, dynamic> _$OtherSessionUserResponseToJson(
@@ -18,4 +19,5 @@ Map<String, dynamic> _$OtherSessionUserResponseToJson(
 ) => <String, dynamic>{
   'userId': instance.userId,
   'username': instance.username,
+  'mayoKey': instance.mayoKey,
 };

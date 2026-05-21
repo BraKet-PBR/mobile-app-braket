@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mobile_app_braket/domain/external_services/api_response.dart';
-import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
+import 'package:mobile_app_braket/core/usecases/token_provider.dart';
 
 abstract class APIServiceBase {
   final Dio dio;

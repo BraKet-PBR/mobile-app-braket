@@ -9,6 +9,7 @@ class PullMessageResponse {
   final String messageNonce;
   final String algorithm;
   final String createdAt;
+  final String mayoSignature;
 
   PullMessageResponse({
     required this.messageId,
@@ -16,6 +17,7 @@ class PullMessageResponse {
     required this.messageNonce,
     required this.algorithm,
     required this.createdAt,
+    required this.mayoSignature,
   });
 
   factory PullMessageResponse.fromJson(Map<String, dynamic> json) =>

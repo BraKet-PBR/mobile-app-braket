@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
+import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
-import 'package:mobile_app_braket/domain/external_services/encryption_service.dart';
+import 'package:mobile_app_braket/core/cryptoServices/encryption_service.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
 import 'package:mobile_app_braket/domain/models/encryption_result.dart';
 import 'package:mobile_app_braket/domain/models/send_message_dto.dart';
@@ -13,12 +15,14 @@ class MessageController extends ControllerBase {
   final EncryptionService encryptionService;
   final QkdSessionStorage qkdSessionStorage;
   final AESKeyStorage aesKeyStorage;
+  final MayoService mayoService;
 
   MessageController({
     required this.messageService,
     required this.encryptionService,
     required this.qkdSessionStorage,
     required this.aesKeyStorage,
+    required this.mayoService,
   });
 
   final RxString sendStatus = ''.obs;
@@ -56,14 +60,37 @@ class MessageController extends ControllerBase {
         return;
       }
 
-      final EncryptionResult result = await encryptionService.encrypt(plaintext, aesKey);
+      final EncryptionResult encryptionResult = await encryptionService.encrypt(plaintext, aesKey);
+      if (encryptionResult.ciphertext.isEmpty) {
+        await popup(AppStrings.error, AppStrings.encyrptionError);
+        return;
+      }
+
+      if (encryptionResult.messageNonce.isEmpty) {
+        await popup(AppStrings.error, AppStrings.nonceError);
+        return;
+      }
+
+      String mayoSignature;
+      try {
+        mayoSignature = await mayoService.signCiphertext(encryptionResult.ciphertext);
+      } catch (error) {
+        await popup(AppStrings.qkdNoMayoKeyTitle, AppStrings.qkdNoMayoKeyMessage);
+        return;
+      }
+
+      if (mayoSignature.isEmpty) {
+        await popup(AppStrings.error, AppStrings.mayoError);
+        return;
+      }
 
       final response = await messageService.sendMessage(
         SendMessageDto(
           sessionId: sessionId,
-          ciphertext: result.ciphertext,
-          messageNonce: result.messageNonce,
-          algorithm: 'AES',
+          ciphertext: encryptionResult.ciphertext,
+          messageNonce: encryptionResult.messageNonce,
+          mayoSignature: mayoSignature,
+          algorithm: 'AES', // Hardcode, to jest okej ponieważ nie ma wyboru algorytmu na ten moment, może będzie kiedyś więc zostawiam
         ),
       );
 

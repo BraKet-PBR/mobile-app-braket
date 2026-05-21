@@ -3,7 +3,7 @@ import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/domain/external_services/api_response.dart';
 import 'package:mobile_app_braket/domain/external_services/login_service.dart';
 import 'package:mobile_app_braket/domain/models/login_dto.dart';
-import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
+import 'package:mobile_app_braket/core/usecases/token_provider.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';

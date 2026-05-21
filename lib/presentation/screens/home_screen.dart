@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
+import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 import 'package:mobile_app_braket/presentation/controllers/qkd_session_controller.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
-import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 
@@ -75,10 +75,7 @@ class HomeScreen extends StatelessWidget {
 
                 child: ElevatedButton(
                   onPressed: () async {
-                    // try to obtain key from AES storage; fallback to placeholder
-                    final aes = Get.find<AESKeyStorage>();
-                    String? key = await aes.getKey();
-                    await controller.joinOrStartSession(keyHash: key ?? 'KEY_HASH');
+                    await controller.joinOrStartSession();
                   },
 
                   style: ElevatedButton.styleFrom(

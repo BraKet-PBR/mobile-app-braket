@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
-import 'package:mobile_app_braket/domain/external_services/encryption_service.dart';
+import 'package:mobile_app_braket/core/cryptoServices/encryption_service.dart';
 import 'package:mobile_app_braket/domain/models/pull_message_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
@@ -12,12 +13,14 @@ class PullMessageController extends ControllerBase {
   final QkdSessionStorage qkdSessionStorage;
   final EncryptionService encryptionService;
   final AESKeyStorage aesKeyStorage;
+  final MayoService mayoService;
 
   PullMessageController({
     required this.messageService,
     required this.qkdSessionStorage,
     required this.encryptionService,
     required this.aesKeyStorage,
+    required this.mayoService,
   });
 
   final RxString messageId = ''.obs;
@@ -65,11 +68,28 @@ class PullMessageController extends ControllerBase {
         return;
       }
 
+      bool isSignatureValid = false;
+      try {
+        isSignatureValid = await mayoService.validateSignature(
+          response.body!.ciphertext,
+          response.body!.mayoSignature,
+        );
+      } catch (error) {
+        await popup(AppStrings.error, AppStrings.pullNoMayoPeerKey);
+        return;
+      }
+
+      if (!isSignatureValid) {
+        await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.pullInvalidSignature);
+        return;
+      }
+
       final cid = response.body!.ciphertext;
       messageId.value = response.body!.messageId;
       ciphertext.value = cid;
       algorithm.value = response.body!.algorithm;
       createdAt.value = response.body!.createdAt;
+
 
       final aesKey = await aesKeyStorage.getKey();
       if (aesKey == null || aesKey.isEmpty) {

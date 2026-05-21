@@ -6,10 +6,12 @@ part 'other_session_user_response.g.dart';
 class OtherSessionUserResponse {
   final String userId;
   final String username;
+  final String mayoKey;
 
   OtherSessionUserResponse({
     required this.userId,
     required this.username,
+    required this.mayoKey,
   });
 
   factory OtherSessionUserResponse.fromJson(

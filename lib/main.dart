@@ -10,21 +10,25 @@ import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage_impl.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage_impl.dart';
+import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
+import 'package:mobile_app_braket/core/usecases/mayo_storage_impl.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage_impl.dart';
 import 'package:mobile_app_braket/core/usecases/token_provider_impl.dart';
 
-import 'package:mobile_app_braket/data/datasources/encryption_service_impl.dart';
+import 'package:mobile_app_braket/core/cryptoServices/encryption_service_impl.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_service_impl.dart';
 import 'package:mobile_app_braket/data/datasources/login_service_impl.dart';
 import 'package:mobile_app_braket/data/datasources/message_service_impl.dart';
 import 'package:mobile_app_braket/data/datasources/qkd_session_service_impl.dart';
 
-import 'package:mobile_app_braket/domain/external_services/encryption_service.dart';
+import 'package:mobile_app_braket/core/cryptoServices/encryption_service.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
 import 'package:mobile_app_braket/domain/external_services/login_service.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
 
-import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
+import 'package:mobile_app_braket/core/usecases/token_provider.dart';
 
 import 'package:mobile_app_braket/presentation/controllers/login_controller.dart';
 import 'package:mobile_app_braket/presentation/controllers/message_controller.dart';
@@ -100,6 +104,14 @@ Future<void> main() async {
     AESKeyStorageImpl(storage),
   );
 
+  Get.put<MayoStorage>(
+    MayoStorageImpl(storage),
+  );
+
+  Get.put<MayoService>(
+    MayoServiceImpl(Get.find<MayoStorage>()),
+  );
+
   Get.put(
     LoginController(
       tokenProvider: Get.find<TokenProvider>(),
@@ -113,6 +125,9 @@ Future<void> main() async {
     QkdSessionController(
       qkdSessionService: Get.find<QkdSessionService>(),
       qkdSessionStorage: Get.find<QkdSessionStorage>(),
+      aesKeyStorage: Get.find<AESKeyStorage>(),
+      mayoStorage: Get.find<MayoStorage>(),
+      mayoService: Get.find<MayoService>(),
     ),
   );
 
@@ -122,6 +137,7 @@ Future<void> main() async {
       encryptionService: Get.find<EncryptionService>(),
       qkdSessionStorage: Get.find<QkdSessionStorage>(),
       aesKeyStorage: Get.find<AESKeyStorage>(),
+      mayoService: Get.find<MayoService>(),
     ),
   );
 
@@ -131,6 +147,7 @@ Future<void> main() async {
       qkdSessionStorage: Get.find<QkdSessionStorage>(),
       encryptionService: Get.find<EncryptionService>(),
       aesKeyStorage: Get.find<AESKeyStorage>(),
+      mayoService: Get.find<MayoService>(),
     ),
   );
 

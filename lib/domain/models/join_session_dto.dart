@@ -5,9 +5,11 @@ part 'join_session_dto.g.dart';
 @JsonSerializable()
 class JoinSessionDto {
   final String keyHash;
+  final String mayoKey;
 
   JoinSessionDto({
     required this.keyHash,
+    required this.mayoKey,
   });
 
     factory JoinSessionDto.fromJson(Map<String, dynamic> json) =>
