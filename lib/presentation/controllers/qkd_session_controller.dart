@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
+import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
+import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
-import 'package:mobile_app_braket/domain/models/init_session_dto.dart';
 import 'package:mobile_app_braket/domain/models/join_session_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
@@ -12,10 +14,16 @@ class QkdSessionController extends ControllerBase{
 
   final QkdSessionService qkdSessionService;
   final QkdSessionStorage qkdSessionStorage;
+  final AESKeyStorage aesKeyStorage;
+  final MayoStorage mayoStorage;
+  final MayoService mayoService;
 
   QkdSessionController({
     required this.qkdSessionService,
-    required this.qkdSessionStorage
+    required this.qkdSessionStorage,
+    required this.aesKeyStorage,
+    required this.mayoStorage,
+    required this.mayoService,
   });
 
   final RxString otherUserId = ''.obs;
@@ -28,16 +36,34 @@ class QkdSessionController extends ControllerBase{
 
   bool isBusy = false;
 
-  Future<void> joinOrStartSession({required String keyHash}) async {
-    if (isBusy) return;
+  Future<void> joinOrStartSession() async {
+    if (isBusy) {
+      return;
+    }
 
     try {
       isBusy = true;
 
       if (!await hasInternetConnection()) return;
 
+      final String? storedKey = await aesKeyStorage.getKey();
+      if (storedKey == null || storedKey.isEmpty) {
+        await popup(AppStrings.qkdNoKeyTitle, AppStrings.qkdNoKeyMessage);
+        return;
+      }
+
+      // Uruchomienie nowej sesji generuje nową parę kluczy mayo 
+      await mayoService.generateMayoKeyPairAndStore();
+
+      // pobranie swojego własnego klucza mayo publicznego wcześniej wygeneorwane i wysłanie na endpoint
+      String? mayoPublicSelfKey = await mayoStorage.getMayoPublicSelf();
+      if (mayoPublicSelfKey == null || mayoPublicSelfKey.isEmpty) {
+        await popup(AppStrings.qkdNoMayoKeyTitle, AppStrings.qkdNoMayoKeyMessage);
+        return;
+      }
+
       final response = await qkdSessionService.joinSession(
-        JoinSessionDto(keyHash: keyHash),
+        JoinSessionDto(keyHash: storedKey, mayoKey: mayoPublicSelfKey), 
       );
 
       if (response.error != null) {
@@ -56,6 +82,7 @@ class QkdSessionController extends ControllerBase{
       sessionStatus.value = response.body!.status;
 
       if (response.body!.status.toLowerCase() == 'waiting_peer') {
+        // tutaj wpada sytuacja gdy dany user jest pierwszym który dołącza do sesji i musi czekać na drugiego usera
         _startPolling();
       } else {
         await fetchOtherUser();
@@ -67,95 +94,6 @@ class QkdSessionController extends ControllerBase{
     }
   }
 
-
-  Future<void> initSession() async {
-    
-    if (isBusy) {
-      return;
-    }
-
-    try {
-      isBusy = true;
-
-      if (!await hasInternetConnection()){
-        return;
-      }
-
-      //TODO: ustalić czym będzie user_id, może jego uuid z bazy??
-      //TODO: wstawić key_hash ustalony po qkd
-      final response = await qkdSessionService.initSession(
-        InitSessionDto(
-          keyHash: "KEY_HASH",
-        ),
-      );
-
-      if (response.error != null){
-        await handleSomethingWentWrong(response.error);
-        return;
-      }
-
-      if (response.body == null) {
-        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdCreateSessionFailed);
-        return;
-      }
-
-      await qkdSessionStorage.saveSessionId(response.body!.sessionId);
-      await qkdSessionStorage.saveSessionStatus(response.body!.status);
-      await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
-      sessionStatus.value = response.body!.status;
-
-      await fetchOtherUser();
-    }
-    catch (error) {
-      await handleSomethingWentWrong(error);
-    }
-    finally {
-      isBusy = false;
-    }
-  }
-
-
-  Future<void> joinSession() async {
-    if (isBusy) {
-      return;
-    }
-
-    try {
-      isBusy = true;
-
-      if (!await hasInternetConnection()){
-        return;
-      }
-
-      final response = await qkdSessionService.joinSession(
-        JoinSessionDto(
-          keyHash: "KEY_HASH",
-        ),
-      );
-
-      if (response.error != null) {
-        await handleSomethingWentWrong(response.error);
-        return;
-      }
-
-      if (response.body == null) {
-        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinSessionFailed);
-        return;
-      }
-
-      await qkdSessionStorage.saveSessionId(response.body!.sessionId);
-      await qkdSessionStorage.saveSessionStatus(response.body!.status);
-      await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
-      sessionStatus.value = response.body!.status;
-      await fetchOtherUser();
-    }
-    catch (error) {
-      await handleSomethingWentWrong(error);
-    }
-    finally {
-      isBusy = false;
-    }
-  }
 
 
   Future<void> fetchOtherUser() async {
@@ -177,6 +115,12 @@ class QkdSessionController extends ControllerBase{
 
     otherUserId.value = response.body!.userId;
     otherUsername.value = response.body!.username;
+
+    // zapisanie klcuza publicznego wysłanego przez odbiorce przy dołączeniu do sesji. 
+    if (response.body!.mayoKey.isNotEmpty) {
+      await mayoStorage.saveMayoPublicPeer(response.body!.mayoKey);
+    }
+
     _stopPolling();
   }
 
@@ -194,7 +138,6 @@ class QkdSessionController extends ControllerBase{
     isPolling = true;
 
     _pollTimer = Timer.periodic(_pollInterval, (timer) async {
-      // Check TTL
       final expiresAt = await qkdSessionStorage.getSessionExpiresAt();
       if (expiresAt != null) {
         final expiry = DateTime.tryParse(expiresAt);

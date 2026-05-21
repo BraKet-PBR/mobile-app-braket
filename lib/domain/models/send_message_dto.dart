@@ -8,12 +8,14 @@ class SendMessageDto {
   final String ciphertext;
   final String messageNonce;
   final String algorithm;
+  final String mayoSignature;
 
   SendMessageDto({
     required this.sessionId,
     required this.ciphertext,
     required this.messageNonce,
     required this.algorithm,
+    required this.mayoSignature,
   });
 
   factory SendMessageDto.fromJson(Map<String, dynamic> json) =>

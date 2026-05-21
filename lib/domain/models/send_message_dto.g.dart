@@ -12,6 +12,7 @@ SendMessageDto _$SendMessageDtoFromJson(Map<String, dynamic> json) =>
       ciphertext: json['ciphertext'] as String,
       messageNonce: json['messageNonce'] as String,
       algorithm: json['algorithm'] as String,
+      mayoSignature: json['mayoSignature'] as String,
     );
 
 Map<String, dynamic> _$SendMessageDtoToJson(SendMessageDto instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$SendMessageDtoToJson(SendMessageDto instance) =>
       'ciphertext': instance.ciphertext,
       'messageNonce': instance.messageNonce,
       'algorithm': instance.algorithm,
+      'mayoSignature': instance.mayoSignature,
     };

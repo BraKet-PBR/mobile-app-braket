@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:mobile_app_braket/domain/usecases/token_provider.dart';
+import 'package:mobile_app_braket/core/usecases/token_provider.dart';
 
 
 class TokenProviderImpl implements TokenProvider {
