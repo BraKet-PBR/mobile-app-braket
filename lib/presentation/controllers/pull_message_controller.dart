@@ -50,6 +50,8 @@ class PullMessageController extends ControllerBase {
         return;
       }
 
+      // TODO sprawdzenie czy sesja aktywna
+
       final response = await messageService.pullMessage(
         PullMessageDto(sessionId: sessionId),
       );

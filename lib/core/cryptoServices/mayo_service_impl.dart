@@ -36,8 +36,7 @@ class MayoServiceImpl implements MayoService {
       throw StateError('Klucz prywatny mayo nie znaleziony w local storage.');
     }
 
-    // tu podpisywanie
-    // TODO: ta funkcja musi zwracać jakiś obiekt najlepiej chyba w podpisem i szyforgramem
+    // tu podpisywanie mayo
 
 
     return "signedCiphertext";

@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
@@ -10,8 +13,7 @@ import 'package:mobile_app_braket/domain/external_services/qkd_session_service.d
 import 'package:mobile_app_braket/domain/models/join_session_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
-class QkdSessionController extends ControllerBase{
-
+class QkdSessionController extends ControllerBase {
   final QkdSessionService qkdSessionService;
   final QkdSessionStorage qkdSessionStorage;
   final AESKeyStorage aesKeyStorage;
@@ -52,18 +54,23 @@ class QkdSessionController extends ControllerBase{
         return;
       }
 
-      // Uruchomienie nowej sesji generuje nową parę kluczy mayo 
+      // Uruchomienie nowej sesji generuje nową parę kluczy mayo
       await mayoService.generateMayoKeyPairAndStore();
 
       // pobranie swojego własnego klucza mayo publicznego wcześniej wygeneorwane i wysłanie na endpoint
       String? mayoPublicSelfKey = await mayoStorage.getMayoPublicSelf();
       if (mayoPublicSelfKey == null || mayoPublicSelfKey.isEmpty) {
-        await popup(AppStrings.qkdNoMayoKeyTitle, AppStrings.qkdNoMayoKeyMessage);
+        await popup(
+          AppStrings.qkdNoMayoKeyTitle,
+          AppStrings.qkdNoMayoKeyMessage,
+        );
         return;
       }
 
+      final keyHash = sha256.convert(utf8.encode(storedKey)).toString();
+      
       final response = await qkdSessionService.joinSession(
-        JoinSessionDto(keyHash: storedKey, mayoKey: mayoPublicSelfKey), 
+        JoinSessionDto(keyHash: keyHash, mayoKey: mayoPublicSelfKey),
       );
 
       if (response.error != null) {
@@ -72,7 +79,10 @@ class QkdSessionController extends ControllerBase{
       }
 
       if (response.body == null) {
-        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinOrCreateSessionFailed);
+        await popup(
+          AppStrings.qkdUnexpectedErrorTitle,
+          AppStrings.qkdJoinOrCreateSessionFailed,
+        );
         return;
       }
 
@@ -94,8 +104,6 @@ class QkdSessionController extends ControllerBase{
     }
   }
 
-
-
   Future<void> fetchOtherUser() async {
     final response = await qkdSessionService.getOtherSessionUser();
 
@@ -116,7 +124,7 @@ class QkdSessionController extends ControllerBase{
     otherUserId.value = response.body!.userId;
     otherUsername.value = response.body!.username;
 
-    // zapisanie klcuza publicznego wysłanego przez odbiorce przy dołączeniu do sesji. 
+    // zapisanie klcuza publicznego wysłanego przez odbiorce przy dołączeniu do sesji.
     if (response.body!.mayoKey.isNotEmpty) {
       await mayoStorage.saveMayoPublicPeer(response.body!.mayoKey);
     }
@@ -124,14 +132,12 @@ class QkdSessionController extends ControllerBase{
     _stopPolling();
   }
 
-
   void _stopPolling() {
     if (_pollTimer != null && _pollTimer!.isActive) {
       _pollTimer!.cancel();
     }
     isPolling = false;
   }
-
 
   void _startPolling() {
     if (isPolling) return;
@@ -152,6 +158,4 @@ class QkdSessionController extends ControllerBase{
       await fetchOtherUser();
     });
   }
-
-
 }

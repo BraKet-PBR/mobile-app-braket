@@ -43,6 +43,7 @@ class MessageController extends ControllerBase {
         return;
       }
 
+      //TODO: tu by trzeba sprawdzić czy sesja jest aktywna i nie wygasła
       final sessionId = await qkdSessionStorage.getSessionId();
       if (sessionId == null || sessionId.isEmpty) {
         await popup(AppStrings.messageNoSessionTitle, AppStrings.messageNoSessionMessage);
