@@ -50,20 +50,19 @@ class PullMessageController extends ControllerBase {
         return;
       }
 
+      // TODO sprawdzenie czy sesja aktywna
+
       final response = await messageService.pullMessage(
         PullMessageDto(sessionId: sessionId),
       );
 
-      if (response.error != null) {
-        if (response.statusCode == 404) {
+      // 404 oznacza że wszystko jest ok tylko nie ma nowych wiadomości dla danego usera
+      if (response.statusCode == 404) {
           await popup(AppStrings.pullNoMessagesTitle, AppStrings.pullNoMessagesMessage);
-        } else {
-          await handleSomethingWentWrong(response.error);
-        }
-        return;
-      }
+          return;
+      } 
 
-      if (response.body == null) {
+      if (response.statusCode != 200 || response.body == null) {
         await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.pullMessageFailed);
         return;
       }

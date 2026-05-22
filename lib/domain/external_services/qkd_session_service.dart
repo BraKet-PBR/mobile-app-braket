@@ -5,9 +5,9 @@ import 'package:mobile_app_braket/domain/models/qkd_session_response.dart';
 
 abstract class QkdSessionService {
 
-  Future<APIResponse<QkdSessionResponse>> initSession(JoinSessionDto dto);
   Future<APIResponse<QkdSessionResponse>> joinSession(JoinSessionDto dto);
   Future<APIResponse<OtherSessionUserResponse>> getOtherSessionUser(/*String sessionId*/);
-  // Jednak będzie tak że backend po jwt sprawdzi sobie jaki user pyta i czy w sesji do której on należy jest inny user
+  // Jednak raczej będzie tak że backend po jwt sprawdzi sobie jaki user pyta i czy w sesji do której on należy jest inny user
+  // Więc brak potrzeby przesyłania sessionId
 
 }

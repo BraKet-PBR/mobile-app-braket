@@ -9,18 +9,9 @@ class QkdSessionServiceImpl extends APIServiceBase implements QkdSessionService{
   QkdSessionServiceImpl(super.dio, {super.tokenProvider});
 
   @override
-  Future<APIResponse<QkdSessionResponse>> initSession(JoinSessionDto dto) {
-    return postAndDeserialize(
-      "/api/qkdsessions/join",
-      dto.toJson(),
-      (json) => QkdSessionResponse.fromJson(json)
-    );
-  }
-
-  @override
   Future<APIResponse<OtherSessionUserResponse>> getOtherSessionUser(/*String sessionId*/) {
     return getAndDeserialize(
-      "/api/other_session_user",
+      "/api/qkdsessions/other_user",
       (json) => OtherSessionUserResponse.fromJson(json)
     );
   }
