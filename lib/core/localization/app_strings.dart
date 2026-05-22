@@ -71,7 +71,7 @@ class AppStrings {
   static const String messageNoAesKeyTitle = "Brak klucza AES";
   static const String messageNoAesKeyMessage = "Nie znaleziono klucza AES w secure local storage.";
   static const String messageUnexpectedErrorTitle = "Nieoczekiwany Błąd";
-  static const String sendMessageFailed = "Nie udało się wysłać wiadomości.";
+  static const String sendMessageFailed = "Brak danych od serwera.";
   static const String messageSentTitle = "Wysłano";
   static const String messagePendingSaved = "Wiadomość została zapisana jako pending.";
   static const String encyrptionError = "Nie udało się zaszyfrować wiadomości.";

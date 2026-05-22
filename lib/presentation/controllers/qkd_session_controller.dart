@@ -68,23 +68,16 @@ class QkdSessionController extends ControllerBase {
       }
 
       final keyHash = sha256.convert(utf8.encode(storedKey)).toString();
-      
+
       final response = await qkdSessionService.joinSession(
         JoinSessionDto(keyHash: keyHash, mayoKey: mayoPublicSelfKey),
       );
 
-      if (response.error != null) {
-        await handleSomethingWentWrong(response.error);
+      if (response.statusCode != 200 || response.body == null) {
+        await popup(AppStrings.qkdUnexpectedErrorTitle, AppStrings.qkdJoinOrCreateSessionFailed);
         return;
       }
 
-      if (response.body == null) {
-        await popup(
-          AppStrings.qkdUnexpectedErrorTitle,
-          AppStrings.qkdJoinOrCreateSessionFailed,
-        );
-        return;
-      }
 
       await qkdSessionStorage.saveSessionId(response.body!.sessionId);
       await qkdSessionStorage.saveSessionStatus(response.body!.status);
@@ -112,14 +105,10 @@ class QkdSessionController extends ControllerBase {
       return;
     }
 
-    if (response.error != null) {
-      await handleSomethingWentWrong(response.error);
+    if (response.statusCode != 200 || response.body == null) {
       return;
     }
 
-    if (response.body == null) {
-      return;
-    }
 
     otherUserId.value = response.body!.userId;
     otherUsername.value = response.body!.username;

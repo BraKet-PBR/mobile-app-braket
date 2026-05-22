@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
-import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/core/cryptoServices/encryption_service.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
@@ -95,8 +94,8 @@ class MessageController extends ControllerBase {
         ),
       );
 
-      if (response.error != null) {
-        await handleSomethingWentWrong(response.error);
+      if (response.statusCode != 201) {
+        await handleSomethingWentWrong(response.error ?? "HTTP ${response.statusCode}");
         return;
       }
 
