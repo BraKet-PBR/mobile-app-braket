@@ -1,5 +1,56 @@
 # Jak uruchomić projekt jako developer
-TODO
+
+
+## Wymagania wstępne
+
+Zainstalowane:
+- Flutter SDK
+- Enulator Android / Google Chrome
+- Git
+
+Sprawdź konfigurację środowiska:
+
+```bash
+flutter doctor
+```
+
+## Klonowanie repozytorium + instalacja zależności
+
+```bash
+git clone https://github.com/BraKet-PBR/mobile-app-braket.git
+
+flutter pub get
+```
+
+# Uruchomienie aplikacji
+
+## Android
+
+Uruchom emulator Android lub podłącz urządzenie.
+
+Sprawdź dostępne urządzenia:
+
+```bash
+flutter devices
+```
+
+Uruchom aplikację:
+
+```bash
+flutter run
+```
+
+
+## Web
+
+Uruchom aplikację w przeglądarce Chrome:
+
+```bash
+flutter run -d chrome
+```
+
+
+
 
 # Jak działa aplikacja - skrócony poradnik użytkownika
 Sekcja opisuje co dokładnie dzieje się podczas uruchomienia akcji przyciskami dostępnymi w aplikacji.
