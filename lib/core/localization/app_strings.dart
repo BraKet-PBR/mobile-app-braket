@@ -7,7 +7,9 @@ class AppStrings {
   static const String pullMessage = "Pobierz wiadomość";
   static const String awaitingOtherPeer = "Oczekiwanie na drugiego użytkownika...";
   static String otherUser(String username) => 'Drugi uczestnik: $username';
-  static String otherUserId(String userId) => 'ID: $userId';
+  static String otherUserId(String userId) => 'ID drugiego usera: $userId';
+  static String loggedInAs(String username) => 'Zalogowany jako: $username';
+  static String sessionStatus(String status) => 'Status sesji: ${status.isEmpty ? "brak sesji" : status.toLowerCase()}';
 
   // login_screen.dart
   static const String moreInfo = "Więcej informacji";
@@ -44,7 +46,7 @@ class AppStrings {
   static const String yes = "Tak";
   static const String no = "Nie";
   static const String logoutConfirmTitle = "Wylogowanie";
-  static const String logoutConfirmMessage = "Czy na pewno chcesz się wylogować?";
+  static const String logoutConfirmMessage = "Czy na pewno chcesz się wylogować? Spowoduje to usunięcie wszystkich danych z aplikacji, w tym kluczy i aktywnych sesji.";
   static const String error = "Błąd";
   static const String noInternet = "Brak połączenia z internetem";
   static const String requestFailed = "Nie udało się wysłać żądania, spróbuj ponownie później.";

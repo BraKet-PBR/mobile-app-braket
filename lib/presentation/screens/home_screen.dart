@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
+import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
+import 'package:mobile_app_braket/core/usecases/token_provider.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 import 'package:mobile_app_braket/presentation/controllers/qkd_session_controller.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
@@ -14,8 +16,9 @@ class HomeScreen extends StatelessWidget {
 
   HomeScreen({super.key});
 
-  final QkdSessionController controller =
-      Get.find<QkdSessionController>();
+  final QkdSessionController controller = Get.find<QkdSessionController>();
+  final TokenProvider tokenProvider = Get.find<TokenProvider>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +48,14 @@ class HomeScreen extends StatelessWidget {
               final apiUrlStorage = Get.find<ApiUrlStorage>();
               final qkdStorage = Get.find<QkdSessionStorage>();
               final aesStorage = Get.find<AESKeyStorage>();
+              final mayoStorage = Get.find<MayoStorage>();
               final flutterStorage = Get.find<FlutterSecureStorage>();
               final dio = Get.find<Dio>();
 
               await apiUrlStorage.clear();
               await qkdStorage.clear();
               await aesStorage.clear();
+              await mayoStorage.clear();
               await flutterStorage.delete(key: 'apiToken');
               dio.options.baseUrl = '';
 
@@ -68,6 +73,46 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
+
+              FutureBuilder<String?>(
+                future: tokenProvider.getUsername(),
+                builder: (context, snapshot) {
+                  // final username = snapshot.data; //TODO: odkomentować
+                  final username = "Mikołaj"; //TODO: usunąć
+
+                  if (username == null) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Column(
+                    children: [
+                      Text(
+                        AppStrings.loggedInAs(username),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Obx(() {
+                        final status = controller.sessionStatus.value;
+
+                        return Text(
+                          AppStrings.sessionStatus(status.isEmpty ? "brak sesji" : status.toLowerCase()),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        );
+                      }),
+
+                      const SizedBox(height: 32),
+                    ],
+                  );
+                },
+              ),
 
               SizedBox(
                 width: double.infinity,
@@ -167,7 +212,7 @@ class HomeScreen extends StatelessWidget {
                   if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
                     return const Text(
                       AppStrings.awaitingOtherPeer,
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                      style: TextStyle(color: Colors.white70, fontSize: 18),
                     );
                   }
                   return const SizedBox.shrink();
@@ -179,7 +224,7 @@ class HomeScreen extends StatelessWidget {
                       AppStrings.otherUser(controller.otherUsername.value),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
