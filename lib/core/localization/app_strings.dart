@@ -6,10 +6,12 @@ class AppStrings {
   static const String sendMessage = "Wyślij wiadomość";
   static const String pullMessage = "Pobierz wiadomość";
   static const String awaitingOtherPeer = "Oczekiwanie na drugiego użytkownika...";
+  static const String sessionExpired = "Sesja wygasła";
   static String otherUser(String username) => 'Drugi uczestnik: $username';
   static String otherUserId(String userId) => 'ID drugiego usera: $userId';
   static String loggedInAs(String username) => 'Zalogowany jako: $username';
   static String sessionStatus(String status) => 'Status sesji: ${status.isEmpty ? "brak sesji" : status.toLowerCase()}';
+  static String sessionExpiresIn(String time) => 'Sesja wygaśnie za: $time';
 
   // login_screen.dart
   static const String moreInfo = "Więcej informacji";

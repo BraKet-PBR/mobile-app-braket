@@ -47,7 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     Text(
                       AppStrings.sendEncryptedMessage,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -56,14 +56,14 @@ class _MessageScreenState extends State<MessageScreen> {
                     TextField(
                       controller: plaintextController,
                       maxLines: 6,
-                      style: const TextStyle(color: Colors.black87),
+                      style: const TextStyle(color: AppColors.black87),
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
                         labelText: AppStrings.plaintextLabel,
                         labelStyle: const TextStyle(color: AppColors.red),
                         hintText: AppStrings.enterMessageHint,
-                        hintStyle: const TextStyle(color: Colors.black45),
+                        hintStyle: const TextStyle(color: AppColors.black45),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -98,7 +98,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: AppColors.white,
                               strokeWidth: 2,
                             ),
                           )
@@ -107,7 +107,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                           ),
                   );
@@ -131,7 +131,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       Text(
                         AppStrings.messageStatus(controller.sendStatus.value),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.white,
                           fontSize: 16,
                         ),
                       ),
@@ -139,7 +139,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       Text(
                         AppStrings.messageId(controller.messageId.value),
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: AppColors.white70,
                           fontSize: 14,
                         ),
                       ),
@@ -147,7 +147,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       Text(
                         AppStrings.messageExpiresAt(controller.expiresAt.value),
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: AppColors.white70,
                           fontSize: 14,
                         ),
                       ),

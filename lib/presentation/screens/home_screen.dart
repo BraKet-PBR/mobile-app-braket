@@ -18,6 +18,7 @@ class HomeScreen extends StatelessWidget {
 
   final QkdSessionController controller = Get.find<QkdSessionController>();
   final TokenProvider tokenProvider = Get.find<TokenProvider>();
+  final QkdSessionStorage qkdSessionStorage = Get.find<QkdSessionStorage>();
 
 
   @override
@@ -74,6 +75,7 @@ class HomeScreen extends StatelessWidget {
 
             children: [
 
+// ======================================================= Zalogowano jako: x 
               FutureBuilder<String?>(
                 future: tokenProvider.getUsername(),
                 builder: (context, snapshot) {
@@ -89,22 +91,34 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         AppStrings.loggedInAs(username),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.white,
                           fontSize: 18,
                         ),
                       ),
 
                       const SizedBox(height: 12),
-
+// ======================================================= Status sesji: x
                       Obx(() {
                         final status = controller.sessionStatus.value;
 
                         return Text(
-                          AppStrings.sessionStatus(status.isEmpty ? "brak sesji" : status.toLowerCase()),
+                          AppStrings.sessionStatus(status),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontSize: 18,
                           ),
+                        );
+                      }),
+
+                      const SizedBox(height: 12),
+
+// ======================================================= Sesja wygaśnie za: x
+                      Obx(() {
+                        final text = controller.sessionExpiryText.value;
+
+                        return Text(
+                          AppStrings.sessionExpiresIn(text),
+                          style: const TextStyle(color: AppColors.white70, fontSize: 16),
                         );
                       }),
 
@@ -114,37 +128,42 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
 
+// ======================================================= Przyciski: Dołącz do sesji
               SizedBox(
                 width: double.infinity,
                 height: 55,
+                child: Obx(() {
+                  final isDisabled = controller.isSessionActive;
 
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await controller.joinOrStartSession();
-                  },
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.red,
-
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  return ElevatedButton(
+                    onPressed: isDisabled
+                        ? null
+                        : () async {
+                            await controller.joinOrStartSession();
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.red,
+                      disabledBackgroundColor: AppColors.red_dark,
+                      disabledForegroundColor: AppColors.white70,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-
-                  child: const Text(
-                    AppStrings.joinSession,
-
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    child: const Text(
+                      AppStrings.joinSession,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                }),
               ),
 
               const SizedBox(height: 16),
 
+// ======================================================= Przyciski: Wyślij wiadomość
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -168,7 +187,7 @@ class HomeScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                 ),
@@ -176,6 +195,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
+// ======================================================= Przyciski: Pobierz wiadomość
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -199,7 +219,7 @@ class HomeScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                 ),
@@ -212,18 +232,19 @@ class HomeScreen extends StatelessWidget {
                   if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
                     return const Text(
                       AppStrings.awaitingOtherPeer,
-                      style: TextStyle(color: Colors.white70, fontSize: 18),
+                      style: TextStyle(color: AppColors.white70, fontSize: 18),
                     );
                   }
                   return const SizedBox.shrink();
                 }
 
+// ======================================================= Drugi uczestnik: x ID drugiego usera: x
                 return Column(
                   children: [
                     Text(
                       AppStrings.otherUser(controller.otherUsername.value),
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontSize: 18,
                       ),
                     ),
@@ -231,7 +252,7 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       AppStrings.otherUserId(controller.otherUserId.value),
                       style: const TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.white70,
                         fontSize: 14,
                       ),
                     ),
