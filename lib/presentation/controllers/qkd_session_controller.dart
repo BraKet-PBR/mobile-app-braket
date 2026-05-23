@@ -32,6 +32,8 @@ class QkdSessionController extends ControllerBase {
   final RxString otherUsername = ''.obs;
   final RxString sessionStatus = ''.obs;
 
+  final RxString myUsername = ''.obs;
+
   Timer? _pollTimer;
   final Duration _pollInterval = const Duration(seconds: 3);
   bool isPolling = false;
@@ -39,6 +41,10 @@ class QkdSessionController extends ControllerBase {
   bool isBusy = false;
 
   Future<void> joinOrStartSession() async {
+    //TODO: usunąć
+    otherUserId.value = "cdcd3280-fb85-4175-9778-3a6f8bc2606c";
+    otherUsername.value = "Andrzej";
+
     if (isBusy) {
       return;
     }
@@ -112,6 +118,7 @@ class QkdSessionController extends ControllerBase {
 
     otherUserId.value = response.body!.userId;
     otherUsername.value = response.body!.username;
+
 
     // zapisanie klcuza publicznego wysłanego przez odbiorce przy dołączeniu do sesji.
     if (response.body!.mayoKey.isNotEmpty) {

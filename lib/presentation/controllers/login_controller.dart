@@ -117,15 +117,15 @@ class LoginController extends ControllerBase {
       return;
     }
 
-    await saveToken(apiResponse.body!);
-  }
+    await tokenProvider.saveToken(apiResponse.body!);
+    print("Username: ${await tokenProvider.getUsername()}"); //TODO: USUNĄĆ
 
-
-  Future<void> saveToken(String token) async {
-    await tokenProvider.saveToken(token);
 
     Get.offAllNamed('/home');
   }
+
+
+
 
 
   String? usernameValidator(String? value) {
