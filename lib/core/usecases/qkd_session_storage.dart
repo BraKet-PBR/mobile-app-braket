@@ -7,9 +7,9 @@ abstract class QkdSessionStorage {
 
   Future<String?> getSessionStatus();
 
-  Future<void> saveSessionExpiresAt(String expiresAt);
+  Future<void> saveSessionExpiresAt(DateTime expiresAt);
 
-  Future<String?> getSessionExpiresAt();
+  Future<DateTime?> getSessionExpiresAt();
 
   Future<void> clear();
 }

@@ -26,10 +26,10 @@ class LoginScreen extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: TextButton.icon(
                     onPressed: () {},
-                    icon: const Icon(Icons.info_outline, color: Colors.white),
+                    icon: const Icon(Icons.info_outline, color: AppColors.white),
                     label: const Text(
                       AppStrings.moreInfo,
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppColors.white),
                     ),
                   ),
                 ),
@@ -52,14 +52,14 @@ class LoginScreen extends StatelessWidget {
 
                 TextFormField(
                   controller: usernameController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: AppColors.white),
                   validator: controller.usernameValidator,
                   onSaved: (value) {
                     controller.model.value.username = value;
                   },
                   decoration: InputDecoration(
                     hintText: AppStrings.loginHint,
-                    hintStyle: const TextStyle(color: Colors.white54),
+                    hintStyle: const TextStyle(color: AppColors.white54),
                     prefixIcon: const Icon(
                       Icons.person_2_outlined,
                       color: Colors.white70,
@@ -79,14 +79,14 @@ class LoginScreen extends StatelessWidget {
 
                 TextFormField(
                   controller: controller.apiUrlController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: AppColors.white),
                   //validator: controller.apiUrlValidator, TODO: odkomentować to, walidacja tylko na testy wyłączona
                   decoration: InputDecoration(
                     hintText: AppStrings.apiUrlHint,
-                    hintStyle: const TextStyle(color: Colors.white54),
+                    hintStyle: const TextStyle(color: AppColors.white54),
                     prefixIcon: const Icon(
                       Icons.link,
-                      color: Colors.white70,
+                      color: AppColors.white70,
                     ),
                     filled: true,
                     fillColor: AppColors.gray_light,
@@ -104,17 +104,17 @@ class LoginScreen extends StatelessWidget {
                 TextFormField(
                   controller: passwordController,
                   obscureText: true,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: AppColors.white),
                   validator: controller.passwordValidator,
                   onSaved: (value) {
                     controller.model.value.password = value;
                   },
                   decoration: InputDecoration(
                     hintText: AppStrings.passwordHint,
-                    hintStyle: const TextStyle(color: Colors.white54),
+                    hintStyle: const TextStyle(color: AppColors.white54),
                     prefixIcon: const Icon(
                       Icons.lock_outlined,
-                      color: Colors.white70,
+                      color: AppColors.white70,
                     ),
                     filled: true,
                     fillColor: AppColors.gray_light,
@@ -145,7 +145,7 @@ class LoginScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                   ),

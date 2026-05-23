@@ -6,7 +6,7 @@ part 'qkd_session_response.g.dart';
 class QkdSessionResponse {
   final String sessionId;
   final String status;
-  final String expiresAt;
+  final DateTime expiresAt;
 
   QkdSessionResponse({
     required this.sessionId,

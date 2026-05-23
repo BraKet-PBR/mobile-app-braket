@@ -39,12 +39,20 @@ class QkdSessionStorageImpl implements QkdSessionStorage{
   }
 
   @override
-  Future<void> saveSessionExpiresAt(String expiresAt) async {
-    await _storage.write(key: _sessionExpiresAtKey, value: expiresAt);
+  Future<void> saveSessionExpiresAt(DateTime expiresAt) async {
+    await _storage.write(
+      key: _sessionExpiresAtKey,
+      value: expiresAt.toIso8601String(),
+    );
   }
 
   @override
-  Future<String?> getSessionExpiresAt() async {
-    return await _storage.read(key: _sessionExpiresAtKey);
+  Future<DateTime?> getSessionExpiresAt() async {
+    final expiresAtString =
+        await _storage.read(key: _sessionExpiresAtKey);
+
+    return expiresAtString != null
+        ? DateTime.tryParse(expiresAtString)
+        : null;
   }
 }

@@ -46,7 +46,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                     Text(
                       AppStrings.pullEncryptedMessage,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -69,7 +69,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: AppColors.white,
                           ),
                         ),
                       ),
@@ -83,7 +83,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                             Text(
                               AppStrings.receivedMessage,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -92,7 +92,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
@@ -101,7 +101,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   Text(
                                     AppStrings.messageId(controller.messageId.value),
                                     style: const TextStyle(
-                                      color: Colors.black87,
+                                      color: AppColors.black87,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -109,7 +109,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   Text(
                                     AppStrings.messagePlaintext(controller.plaintext.value),
                                     style: const TextStyle(
-                                      color: Colors.black87,
+                                      color: AppColors.black87,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -117,7 +117,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   Text(
                                     AppStrings.messageAlgorithm(controller.algorithm.value),
                                     style: const TextStyle(
-                                      color: Colors.black87,
+                                      color: AppColors.black87,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -125,7 +125,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                   Text(
                                     AppStrings.messageCreatedAt(controller.createdAt.value),
                                     style: const TextStyle(
-                                      color: Colors.black87,
+                                      color: AppColors.black87,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -136,7 +136,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                             Text(
                               AppStrings.messageDeletionWarning,
                               style: const TextStyle(
-                                color: Color.fromRGBO(255, 255, 255, 0.8),
+                                color: AppColors.white70,
                                 fontSize: 13,
                               ),
                             ),
