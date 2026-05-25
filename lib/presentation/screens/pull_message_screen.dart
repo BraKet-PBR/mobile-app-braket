@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/presentation/controllers/pull_message_controller.dart';
@@ -24,6 +25,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.gray,
+// ======================================================= Tytuł na pasku na górze
       appBar: AppBar(
         backgroundColor: AppColors.red,
         title: const Text(AppStrings.pullMessageTitle),
@@ -34,6 +36,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -42,6 +45,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
+// ======================================================= Przycisk "Pobierz wiadomość" + tło
                   children: [
                     Text(
                       AppStrings.pullEncryptedMessage,
@@ -51,7 +55,9 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+
                     const SizedBox(height: 20),
+
                     SizedBox(
                       height: 55,
                       child: ElevatedButton(
@@ -74,7 +80,11 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                         ),
                       ),
                     ),
+
+
                     const SizedBox(height: 24),
+
+// ======================================================= Kontener z informacjami o pobranej wiadomości
                     Obx(() {
                       if (controller.hasMessage.value) {
                         return Column(
@@ -105,7 +115,9 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                       fontSize: 14,
                                     ),
                                   ),
+
                                   const SizedBox(height: 8),
+
                                   Text(
                                     AppStrings.messagePlaintext(controller.plaintext.value),
                                     style: const TextStyle(
@@ -113,7 +125,9 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                       fontSize: 14,
                                     ),
                                   ),
+
                                   const SizedBox(height: 8),
+
                                   Text(
                                     AppStrings.messageAlgorithm(controller.algorithm.value),
                                     style: const TextStyle(
@@ -121,7 +135,9 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                       fontSize: 14,
                                     ),
                                   ),
+
                                   const SizedBox(height: 8),
+
                                   Text(
                                     AppStrings.messageCreatedAt(controller.createdAt.value),
                                     style: const TextStyle(
@@ -129,10 +145,50 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                       fontSize: 14,
                                     ),
                                   ),
+
+                                  const SizedBox(height: 16),
+
+                                  SizedBox(
+                                    height: 45,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        await Clipboard.setData(
+                                          ClipboardData(text: controller.plaintext.value),
+                                        );
+
+                                        Get.snackbar(
+                                          AppStrings.success,
+                                          AppStrings.plaintextCopySuccess,
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: AppColors.red,
+                                          colorText: AppColors.white,
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.red,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      icon: const Icon(
+                                        Icons.copy,
+                                        color: AppColors.white,
+                                      ),
+                                      label: const Text(
+                                        AppStrings.copyPlaintextButton,
+                                        style: TextStyle(
+                                          color: AppColors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
+
                             const SizedBox(height: 16),
+
                             Text(
                               AppStrings.messageDeletionWarning,
                               style: const TextStyle(

@@ -22,8 +22,6 @@ git clone https://github.com/BraKet-PBR/mobile-app-braket.git
 flutter pub get
 ```
 
-# Uruchomienie aplikacji
-
 ## Android
 
 Uruchom emulator Android lub podłącz urządzenie.
@@ -68,7 +66,7 @@ API URL - przy lokalnym uruchomieniu API ze standardową dostarczoną przez nas 
 5. Jeśli w punkcie 3 zwrócony został status sesji `waiting_peer`, to aplikacja cyklicznie wykonuje działania z punktu 4 aby uzyskać informacje po dołączeniu drugiego użytkownika do sesji.
 
 
-# "Wyślij wiadomość"
+## "Wyślij wiadomość"
 1. Następuje przekierowanie na ekran wysyłania wiadomości.
 2. Przed wysłaniem wiadomości aplikacja sprawdza, czy spełnione są wymagane warunki. W przypadku niespełnienia któregoś z nich, informuje o tym stosownym komunikatem. Warunki:
     - Istnienie aktywna sesja
@@ -80,7 +78,7 @@ API URL - przy lokalnym uruchomieniu API ze standardową dostarczoną przez nas 
 5. Szyfrogram zostaje wysłany na endpoint `POST /api/messages` z następującymi danymi: {sessionId, ciphertext, messageNonce, mayoSignature, algorithm}. Algorytm jest ustawiony jako AES-GCM. Obecnie jest to jedyny wspierany przez system BraKet algorytm. Pole to zostało dodane w przypadku chęci rozbudowy systemu o dodatkowe algorytmy szyfrowania. Endpoint zwraca {messageId, status, expiresAt}
 
 
-# "Pobierz wiadomość"
+## "Pobierz wiadomość"
 1. Następuje przekierowanie na ekran pobierania wiadomości.
 2. Przed pobraniem wiadomości aplikacja sprawdza, czy spełnione są wymagane warunki. W przypadku niespełnienia któregoś z nich, informuje o tym stosownym komunikatem. Warunki:
     - Istnienie aktywna sesja

@@ -69,7 +69,7 @@ class AppStrings {
 
   // message_controller.dart
   static const String messageNoSessionTitle = "Brak sesji";
-  static const String messageNoSessionMessage = "Najpierw utwórz lub dołącz do sesji.";
+  static const String messageNoSessionMessage = "Najpierw dołącz do sesji.";
   static const String messageNoDataTitle = "Brak danych";
   static const String messageNoDataMessage = "Uzupełnij tekst wiadomości.";
   static const String messageNoAesKeyTitle = "Brak klucza AES";
@@ -77,7 +77,7 @@ class AppStrings {
   static const String messageUnexpectedErrorTitle = "Nieoczekiwany Błąd";
   static const String sendMessageFailed = "Brak danych od serwera.";
   static const String messageSentTitle = "Wysłano";
-  static const String messagePendingSaved = "Wiadomość została zapisana jako pending.";
+  static const String messagePendingSaved = "Szyfrogram przesłany na serwer.";
   static const String encyrptionError = "Nie udało się zaszyfrować wiadomości.";
   static const String nonceError = "Nie udało się wygenerować nonce.";
   static const String mayoError = "Nie udało się podpisać wiadomości.";
@@ -92,6 +92,9 @@ class AppStrings {
   static const String pullDecryptFailed = "Nie udało się odszyfrować wiadomości.";
   static const String pullNoMayoPeerKey = "Nie znaleziono klucza Mayo odbiorcy.";
   static const String pullInvalidSignature = "Nieprawidłowy podpis Mayo.";
+  static const String plaintextCopySuccess = "Tekst wiadomości skopiowany do schowka.";
+  static const String success = "Sukces";
+  static const String copyPlaintextButton = "Kopiuj do schowka";
 
   // qkd_session_controller.dart
   static const String qkdUnexpectedErrorTitle = "Nieoczekiwany Błąd";

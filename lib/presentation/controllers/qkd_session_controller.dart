@@ -71,10 +71,7 @@ class QkdSessionController extends ControllerBase {
 
       final mayoPublicSelfKey = await mayoStorage.getMayoPublicSelf();
       if (mayoPublicSelfKey == null || mayoPublicSelfKey.isEmpty) {
-        await popup(
-          AppStrings.qkdNoMayoKeyTitle,
-          AppStrings.qkdNoMayoKeyMessage,
-        );
+        await popup(AppStrings.qkdNoMayoKeyTitle, AppStrings.qkdNoMayoKeyMessage);
         return;
       }
 

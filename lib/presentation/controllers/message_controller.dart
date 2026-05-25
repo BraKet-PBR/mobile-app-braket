@@ -31,6 +31,13 @@ class MessageController extends ControllerBase {
   final RxBool isBusy = false.obs;
 
   Future<void> sendMessage(String plaintext) async {
+
+    // ========================= TODO: usunąć
+    messageId.value = "6d165395-a472-4ff6-8b26-6c86954f18be";
+    expiresAt.value = "DateTime";
+    sendStatus.value = "Pending";
+    // ========================= TODO: usunąć
+
     if (isBusy.value) {
       return;
     }
@@ -42,7 +49,6 @@ class MessageController extends ControllerBase {
         return;
       }
 
-      //TODO: tu by trzeba sprawdzić czy sesja jest aktywna i nie wygasła
       final sessionId = await qkdSessionStorage.getSessionId();
       if (sessionId == null || sessionId.isEmpty) {
         await popup(AppStrings.messageNoSessionTitle, AppStrings.messageNoSessionMessage);
@@ -105,8 +111,8 @@ class MessageController extends ControllerBase {
       }
 
       messageId.value = response.body!.messageId;
-      sendStatus.value = response.body!.status;
       expiresAt.value = response.body!.expiresAt;
+      sendStatus.value = response.body!.status;
       await popup(AppStrings.messageSentTitle, AppStrings.messagePendingSaved);
     } catch (error) {
       await handleSomethingWentWrong(error);
