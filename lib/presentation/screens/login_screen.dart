@@ -22,6 +22,8 @@ class LoginScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
+
+// ======================================================= Przycisk: Więcej informacji
                 Align(
                   alignment: Alignment.topLeft,
                   child: TextButton.icon(
@@ -36,6 +38,7 @@ class LoginScreen extends StatelessWidget {
 
                 const Spacer(),
 
+// ======================================================= Logo BraKet
                 const Text(
                   AppStrings.appName,
                   style: TextStyle(
@@ -49,7 +52,31 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 50),
 
+// ======================================================= Pole: API URL
+                TextFormField(
+                  controller: controller.apiUrlController,
+                  style: const TextStyle(color: AppColors.white),
+                  //validator: controller.apiUrlValidator, TODO: odkomentować to, walidacja tylko na testy wyłączona
+                  decoration: InputDecoration(
+                    hintText: AppStrings.apiUrlHint,
+                    hintStyle: const TextStyle(color: AppColors.white54),
+                    prefixIcon: const Icon(
+                      Icons.link,
+                      color: AppColors.white70,
+                    ),
+                    filled: true,
+                    fillColor: AppColors.gray_light,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
 
+
+                const SizedBox(height: 20),
+
+// ======================================================= Pole: Login
                 TextFormField(
                   controller: usernameController,
                   style: const TextStyle(color: AppColors.white),
@@ -76,31 +103,7 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-
-                TextFormField(
-                  controller: controller.apiUrlController,
-                  style: const TextStyle(color: AppColors.white),
-                  //validator: controller.apiUrlValidator, TODO: odkomentować to, walidacja tylko na testy wyłączona
-                  decoration: InputDecoration(
-                    hintText: AppStrings.apiUrlHint,
-                    hintStyle: const TextStyle(color: AppColors.white54),
-                    prefixIcon: const Icon(
-                      Icons.link,
-                      color: AppColors.white70,
-                    ),
-                    filled: true,
-                    fillColor: AppColors.gray_light,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-
-
-                const SizedBox(height: 20),
-
-
+// ======================================================= Pole: Hasło
                 TextFormField(
                   controller: passwordController,
                   obscureText: true,
@@ -128,7 +131,7 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-
+// ======================================================= Przycisk: Zaloguj się
                 SizedBox(
                   width: double.infinity,
                   height: 55,

@@ -128,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
 
-// ======================================================= Przyciski: Dołącz do sesji
+// ======================================================= Przycisk: Dołącz do sesji
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -163,7 +163,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-// ======================================================= Przyciski: Wyślij wiadomość
+// ======================================================= Przycisk: Wyślij wiadomość
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -195,7 +195,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-// ======================================================= Przyciski: Pobierz wiadomość
+// ======================================================= Przycisk: Pobierz wiadomość
               SizedBox(
                 width: double.infinity,
                 height: 55,

@@ -25,16 +25,20 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.gray,
+// ======================================================= Tytuł na pasku na górze
       appBar: AppBar(
         backgroundColor: AppColors.red,
         title: const Text(AppStrings.sendMessageTitle),
       ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+
+// ======================================================= Kontener (cały) do wpisania wiadomości
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -74,8 +78,13 @@ class _MessageScreenState extends State<MessageScreen> {
                     const SizedBox(height: 4),
                   ],
                 ),
+
               ),
+
+
               const SizedBox(height: 24),
+
+// ======================================================= Przycisk: Wyślij wiadomość
               SizedBox(
                 height: 55,
                 child: Obx(() {
@@ -113,7 +122,11 @@ class _MessageScreenState extends State<MessageScreen> {
                   );
                 }),
               ),
+
+
               const SizedBox(height: 24),
+
+// ======================================================= Kontener (cały) z informacjami o statusie wiadomości
               Obx(() {
                 if (controller.sendStatus.value.isEmpty) {
                   return const SizedBox.shrink();

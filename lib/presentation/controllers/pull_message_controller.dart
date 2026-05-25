@@ -33,6 +33,16 @@ class PullMessageController extends ControllerBase {
   bool isBusy = false;
 
   Future<void> pullMessage() async {
+
+    // ========================= TODO: usunąć
+    messageId.value = "11d0417e-0c5b-49cf-8734-623966424170";
+    //ciphertext.value = ""; //to raczej nie potrzebne bedzie tutaj bo nie idzie na screen
+    plaintext.value = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+    algorithm.value = "AES-GCM-256";
+    createdAt.value = "2026-05-25T09:14:47+00:00";
+    hasMessage.value = true;
+    // ========================= TODO: usunąć
+
     if (isBusy) {
       return;
     }
