@@ -7,19 +7,19 @@ class AppStrings {
   static const String pullMessage = "Pobierz wiadomość";
   static const String awaitingOtherPeer = "Oczekiwanie na drugiego użytkownika...";
   static const String sessionExpired = "Sesja wygasła";
-  static String otherUser(String username) => 'Drugi uczestnik: $username';
-  static String otherUserId(String userId) => 'ID drugiego usera: $userId';
-  static String loggedInAs(String username) => 'Zalogowany jako: $username';
-  static String sessionStatus(String status) => 'Status sesji: ${status.isEmpty ? "brak sesji" : status.toLowerCase()}';
-  static String sessionExpiresIn(String time) => 'Sesja wygaśnie za: $time';
+  static const String loggedInAs = "ZALOGOWANO JAKO:";
+  static const String sessionStatusStatic = "STATUS SESJI:";
+  static const String sessionExpiresInStatic = "SESJA WYGAŚNIE ZA:";
+  static const String otherUser = "DRUGI UŻYTKOWNIK:";
+  static const String otherUserId = "ID DRUGIEGO UŻYTKOWNIKA:";
 
   // login_screen.dart
   static const String moreInfo = "Więcej informacji";
   static const String appName = "<BRAKET>";
   static const String loginHint = "Login";
   static const String apiUrlHint = "API URL";
-  static const String passwordHint = "Password";
-  static const String loginButton = "Login";
+  static const String passwordHint = "Hasło";
+  static const String loginButton = "Zaloguj";
 
   // message_screen.dart
   static const String sendMessageTitle = "Wyślij wiadomość";
@@ -27,9 +27,8 @@ class AppStrings {
   static const String enterMessageHint = "Wpisz wiadomość do zaszyfrowania";
   static const String sendMessageButton = "Wyślij wiadomość";
   static const String plaintextLabel = "Plaintext";
+  static const String expires = "WYGASA:";
   static String messageStatus(String status) => 'Status: $status';
-  static String messageId(String id) => 'ID wiadomości: $id';
-  static String messageExpiresAt(String date) => 'Wygasa: $date';
 
   // pull_message_screen.dart
   static const String pullMessageTitle = "Pobierz wiadomość";
@@ -39,9 +38,10 @@ class AppStrings {
   static const String messageDeletionWarning = "Wiadomość zostanie usunięta po wyjściu z ekranu.";
   static const String messageExitConfirmTitle = "Opuszczenie ekranu";
   static const String messageExitConfirmMessage = "Wyjście z ekranu spowoduje bezpowrotne usunięcie wiadomości.";
-  static String messagePlaintext(String plaintext) => 'Plaintext: $plaintext';
-  static String messageAlgorithm(String algorithm) => 'Algorytm: $algorithm';
-  static String messageCreatedAt(String date) => 'Utworzono: $date';
+  static String messageIdStatic = "ID:";
+  static String plaintext = "PLAINTEXT:";
+  static String alg = "ALGORYTM:";
+  static String created = "UTWORZONO:";
 
   // controller_base.dart
   static const String ok = "Ok";

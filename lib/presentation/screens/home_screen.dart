@@ -20,21 +20,48 @@ class HomeScreen extends StatelessWidget {
   final TokenProvider tokenProvider = Get.find<TokenProvider>();
   final QkdSessionStorage qkdSessionStorage = Get.find<QkdSessionStorage>();
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: AppColors.gray,
+      backgroundColor: AppColors.surface,
 
       appBar: AppBar(
-        backgroundColor: AppColors.red,
-
+        backgroundColor: AppColors.surface_elevated,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: AppColors.border),
+        ),
+        titleSpacing: 20,
+        title: Row(
+          children: [
+            Container(
+              width: 3,
+              height: 18,
+              decoration: BoxDecoration(
+                color: AppColors.red,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              AppStrings.appName,
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'monospace',
+                letterSpacing: 3,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.logout,
-              color: AppColors.gray_light,
+              color: AppColors.white54,
+              size: 20,
             ),
             onPressed: () async {
               final shouldLogout = await ControllerBase().confirm(
@@ -63,11 +90,12 @@ class HomeScreen extends StatelessWidget {
               Get.offAllNamed('/login');
             },
           ),
+          const SizedBox(width: 4),
         ],
       ),
 
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
 
         child: Center(
           child: Column(
@@ -75,7 +103,7 @@ class HomeScreen extends StatelessWidget {
 
             children: [
 
-// ======================================================= Zalogowano jako: x 
+// ======================================================= Zalogowano jako: x
               FutureBuilder<String?>(
                 future: tokenProvider.getUsername(),
                 builder: (context, snapshot) {
@@ -88,41 +116,53 @@ class HomeScreen extends StatelessWidget {
 
                   return Column(
                     children: [
-                      Text(
-                        AppStrings.loggedInAs(username),
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 18,
-                        ),
-                      ),
+                      _InfoCard(
+                        children: [
 
-                      const SizedBox(height: 12),
-// ======================================================= Status sesji: x
-                      Obx(() {
-                        final status = controller.sessionStatus.value;
-
-                        return Text(
-                          AppStrings.sessionStatus(status),
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: 18,
+                          _InfoRow(
+                            label: AppStrings.loggedInAs,
+                            value: username,
+                            valueColor: AppColors.white,
                           ),
-                        );
-                      }),
 
-                      const SizedBox(height: 12),
+                          const SizedBox(height: 10),
+
+                          Container(height: 1, color: AppColors.divider),
+
+                          const SizedBox(height: 10),
+
+// ======================================================= Status sesji: x
+                          Obx(() {
+                            final status = controller.sessionStatus.value;
+                            final isActive = controller.isSessionActive;
+
+                            return _InfoRow(
+                              label: AppStrings.sessionStatusStatic,
+                              value: status,
+                              valueColor: isActive
+                                  ? AppColors.terminal_green
+                                  : AppColors.amber,
+                              monospace: true,
+                            );
+                          }),
+
+                          const SizedBox(height: 10),
 
 // ======================================================= Sesja wygaśnie za: x
-                      Obx(() {
-                        final text = controller.sessionExpiryText.value;
+                          Obx(() {
+                            final text = controller.sessionExpiryText.value;
 
-                        return Text(
-                          AppStrings.sessionExpiresIn(text),
-                          style: const TextStyle(color: AppColors.white70, fontSize: 16),
-                        );
-                      }),
+                            return _InfoRow(
+                              label: AppStrings.sessionExpiresInStatic,
+                              value: text,
+                              valueColor: AppColors.white54,
+                              monospace: true,
+                            );
+                          }),
+                        ],
+                      ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
                     ],
                   );
                 },
@@ -131,130 +171,108 @@ class HomeScreen extends StatelessWidget {
 // ======================================================= Przycisk: Dołącz do sesji
               SizedBox(
                 width: double.infinity,
-                height: 55,
+                height: 52,
                 child: Obx(() {
                   final isDisabled = controller.isSessionActive;
 
-                  return ElevatedButton(
+                  return _CyberButton(
+                    label: AppStrings.joinSession,
+                    icon: Icons.cable_outlined,
                     onPressed: isDisabled
                         ? null
                         : () async {
                             await controller.joinOrStartSession();
                           },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.red,
-                      disabledBackgroundColor: AppColors.red_dark,
-                      disabledForegroundColor: AppColors.white70,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      AppStrings.joinSession,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.white,
-                      ),
-                    ),
+                    isPrimary: true,
                   );
                 }),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
 // ======================================================= Przycisk: Wyślij wiadomość
               SizedBox(
                 width: double.infinity,
-                height: 55,
-
-                child: ElevatedButton(
+                height: 52,
+                child: _CyberButton(
+                  label: AppStrings.sendMessage,
+                  icon: Icons.arrow_upward_rounded,
                   onPressed: () {
                     Get.toNamed('/message');
                   },
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.red,
-
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-
-                  child: const Text(
-                    AppStrings.sendMessage,
-
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.white,
-                    ),
-                  ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
 // ======================================================= Przycisk: Pobierz wiadomość
               SizedBox(
                 width: double.infinity,
-                height: 55,
-
-                child: ElevatedButton(
+                height: 52,
+                child: _CyberButton(
+                  label: AppStrings.pullMessage,
+                  icon: Icons.arrow_downward_rounded,
                   onPressed: () {
                     Get.toNamed('/pull-message');
                   },
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.red,
-
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-
-                  child: const Text(
-                    AppStrings.pullMessage,
-
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.white,
-                    ),
-                  ),
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 28),
 
               Obx(() {
                 if (controller.otherUserId.value.isEmpty) {
                   if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
-                    return const Text(
-                      AppStrings.awaitingOtherPeer,
-                      style: TextStyle(color: AppColors.white70, fontSize: 18),
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.amber_dim,
+                        border: Border.all(color: AppColors.amber, width: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                            width: 10,
+                            height: 10,
+                            child: CircularProgressIndicator(
+                              color: AppColors.amber,
+                              strokeWidth: 1.5,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            AppStrings.awaitingOtherPeer,
+                            style: TextStyle(
+                              color: AppColors.amber,
+                              fontSize: 13,
+                              fontFamily: 'monospace',
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }
                   return const SizedBox.shrink();
                 }
 
 // ======================================================= Drugi uczestnik: x ID drugiego usera: x
-                return Column(
+                return _InfoCard(
                   children: [
-                    Text(
-                      AppStrings.otherUser(controller.otherUsername.value),
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 18,
-                      ),
+                    _InfoRow(
+                      label: AppStrings.otherUser,
+                      value: controller.otherUsername.value,
+                      valueColor: AppColors.terminal_green,
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      AppStrings.otherUserId(controller.otherUserId.value),
-                      style: const TextStyle(
-                        color: AppColors.white70,
-                        fontSize: 14,
-                      ),
+                    _InfoRow(
+                      label: AppStrings.otherUserId,
+                      value: controller.otherUserId.value,
+                      valueColor: AppColors.white54,
+                      monospace: true,
+                      small: true,
                     ),
                   ],
                 );
@@ -262,6 +280,145 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ====================== Shared widgets ======================
+
+class _InfoCard extends StatelessWidget {
+  final List<Widget> children;
+  const _InfoCard({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface_elevated,
+        border: Border.all(color: AppColors.border, width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color valueColor;
+  final bool monospace;
+  final bool small;
+
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+    this.monospace = false,
+    this.small = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 130,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.white54,
+              fontSize: 10,
+              fontFamily: 'monospace',
+              letterSpacing: 1.5,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: valueColor,
+              fontSize: small ? 11 : 13,
+              fontFamily: monospace ? 'monospace' : null,
+              fontWeight: FontWeight.w500,
+              letterSpacing: monospace ? 0.3 : 0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CyberButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final bool isPrimary;
+
+  const _CyberButton({
+    required this.label,
+    required this.icon,
+    this.onPressed,
+    this.isPrimary = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final disabled = onPressed == null;
+
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isPrimary
+            ? (disabled ? AppColors.red_dark : AppColors.red)
+            : AppColors.surface_elevated,
+        disabledBackgroundColor: AppColors.red_dark,
+        disabledForegroundColor: AppColors.white54,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+          side: BorderSide(
+            color: isPrimary
+                ? (disabled ? AppColors.border_accent : AppColors.red)
+                : AppColors.border,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: disabled
+                ? AppColors.white54
+                : (isPrimary ? AppColors.white : AppColors.white70),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: disabled
+                  ? AppColors.white54
+                  : (isPrimary ? AppColors.white : AppColors.white70),
+              letterSpacing: 1.5,
+              fontFamily: 'monospace',
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 
@@ -28,7 +28,7 @@ class ControllerBase extends GetxController {
       message = AppStrings.somethingWentWrong;
     }
 
-    await Sentry.captureException(error);
+    // await Sentry.captureException(error); TODO TODO: to powoduje konflikty w sns sentry ale trzeba jakoś ogarnąc
     await popup(AppStrings.error, message);
   }
 
@@ -140,4 +140,6 @@ class ControllerBase extends GetxController {
     || connectivityResult.contains(ConnectivityResult.mobile)
     || connectivityResult.contains(ConnectivityResult.wifi);
   }
+
+  
 }
