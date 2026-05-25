@@ -24,14 +24,45 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.gray,
+      backgroundColor: AppColors.surface,
+
 // ======================================================= Tytuł na pasku na górze
       appBar: AppBar(
-        backgroundColor: AppColors.red,
-        title: const Text(AppStrings.pullMessageTitle),
+        backgroundColor: AppColors.surface_elevated,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: AppColors.border),
+        ),
+        iconTheme: const IconThemeData(color: AppColors.white54),
+        titleSpacing: 4,
+        title: Row(
+          children: [
+            Container(
+              width: 3,
+              height: 14,
+              decoration: BoxDecoration(
+                color: AppColors.red,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              AppStrings.pullMessageTitle.toUpperCase(),
+              style: const TextStyle(
+                color: AppColors.white70,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'monospace',
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+        ),
       ),
+
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,49 +71,74 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.gray_light,
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.surface_elevated,
+                  border: Border.all(color: AppColors.border, width: 1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
+
 // ======================================================= Przycisk "Pobierz wiadomość" + tło
                   children: [
-                    Text(
-                      AppStrings.pullEncryptedMessage,
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.inbox_outlined,
+                          color: AppColors.red,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppStrings.pullEncryptedMessage.toUpperCase(),
+                          style: const TextStyle(
+                            color: AppColors.white70,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'monospace',
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
+                    Container(height: 1, color: AppColors.divider),
+                    const SizedBox(height: 16),
 
                     SizedBox(
-                      height: 55,
+                      height: 52,
                       child: ElevatedButton(
                         onPressed: () {
                           controller.pullMessage();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.red,
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        child: const Text(
-                          AppStrings.pullMessageButton,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.white,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.download_outlined, color: AppColors.white, size: 15),
+                            const SizedBox(width: 8),
+                            Text(
+                              AppStrings.pullMessageButton.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.white,
+                                letterSpacing: 2,
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
 
-
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
 // ======================================================= Kontener z informacjami o pobranej wiadomości
                     Obx(() {
@@ -90,66 +146,82 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text(
-                              AppStrings.receivedMessage,
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            Container(height: 1, color: AppColors.divider),
+                            const SizedBox(height: 16),
+
+                            Row(
+                              children: [
+                                Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.terminal_green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  AppStrings.receivedMessage.toUpperCase(),
+                                  style: const TextStyle(
+                                    color: AppColors.terminal_green,
+                                    fontSize: 10,
+                                    fontFamily: 'monospace',
+                                    letterSpacing: 1.5,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
                             ),
+
                             const SizedBox(height: 12),
+
                             Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                color: AppColors.code_gray,
+                                border: Border.all(color: AppColors.border, width: 1),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Text(
-                                    AppStrings.messageId(controller.messageId.value),
-                                    style: const TextStyle(
-                                      color: AppColors.black87,
-                                      fontSize: 14,
-                                    ),
+                                  _DecryptedRow(
+                                    label: AppStrings.messageIdStatic,
+                                    value: controller.messageId.value,
                                   ),
 
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 10),
+                                  Container(height: 1, color: AppColors.divider),
+                                  const SizedBox(height: 10),
 
-                                  Text(
-                                    AppStrings.messagePlaintext(controller.plaintext.value),
-                                    style: const TextStyle(
-                                      color: AppColors.black87,
-                                      fontSize: 14,
-                                    ),
+                                  _DecryptedRow(
+                                    label: AppStrings.plaintext,
+                                    value: controller.plaintext.value,
+                                    highlight: true,
                                   ),
 
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 10),
+                                  Container(height: 1, color: AppColors.divider),
+                                  const SizedBox(height: 10),
 
-                                  Text(
-                                    AppStrings.messageAlgorithm(controller.algorithm.value),
-                                    style: const TextStyle(
-                                      color: AppColors.black87,
-                                      fontSize: 14,
-                                    ),
+                                  _DecryptedRow(
+                                    label: AppStrings.alg,
+                                    value: controller.algorithm.value,
                                   ),
 
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 10),
+                                  Container(height: 1, color: AppColors.divider),
+                                  const SizedBox(height: 10),
 
-                                  Text(
-                                    AppStrings.messageCreatedAt(controller.createdAt.value),
-                                    style: const TextStyle(
-                                      color: AppColors.black87,
-                                      fontSize: 14,
-                                    ),
+                                  _DecryptedRow(
+                                    label: AppStrings.created,
+                                    value: controller.createdAt.value,
                                   ),
 
                                   const SizedBox(height: 16),
 
                                   SizedBox(
-                                    height: 45,
+                                    height: 44,
                                     child: ElevatedButton.icon(
                                       onPressed: () async {
                                         await Clipboard.setData(
@@ -160,25 +232,36 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                                           AppStrings.success,
                                           AppStrings.plaintextCopySuccess,
                                           snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: AppColors.red,
+                                          backgroundColor: AppColors.surface_elevated,
                                           colorText: AppColors.white,
+                                          borderColor: AppColors.terminal_green_dim,
+                                          borderWidth: 1,
+                                          margin: const EdgeInsets.all(16),
+                                          borderRadius: 6,
+                                          icon: const Icon(Icons.check, color: AppColors.terminal_green, size: 16),
                                         );
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.red,
+                                        backgroundColor: AppColors.surface_elevated,
+                                        elevation: 0,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(6),
+                                          side: const BorderSide(color: AppColors.border, width: 1),
                                         ),
                                       ),
                                       icon: const Icon(
                                         Icons.copy,
-                                        color: AppColors.white,
+                                        color: AppColors.white70,
+                                        size: 15,
                                       ),
-                                      label: const Text(
-                                        AppStrings.copyPlaintextButton,
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                          fontWeight: FontWeight.w600,
+                                      label: Text(
+                                        AppStrings.copyPlaintextButton.toUpperCase(),
+                                        style: const TextStyle(
+                                          color: AppColors.white70,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 11,
+                                          fontFamily: 'monospace',
+                                          letterSpacing: 1.5,
                                         ),
                                       ),
                                     ),
@@ -187,14 +270,25 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
                               ),
                             ),
 
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 14),
 
-                            Text(
-                              AppStrings.messageDeletionWarning,
-                              style: const TextStyle(
-                                color: AppColors.white70,
-                                fontSize: 13,
-                              ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.warning_amber_outlined, color: AppColors.amber, size: 13),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    AppStrings.messageDeletionWarning,
+                                    style: const TextStyle(
+                                      color: AppColors.amber_dim,
+                                      fontSize: 11,
+                                      fontFamily: 'monospace',
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         );
@@ -209,6 +303,52 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DecryptedRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool highlight;
+
+  const _DecryptedRow({
+    required this.label,
+    required this.value,
+    this.highlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 77,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.white54,
+              fontSize: 10,
+              fontFamily: 'monospace',
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: highlight ? AppColors.white : AppColors.white70,
+              fontSize: highlight ? 14 : 12,
+              fontFamily: 'monospace',
+              fontWeight: highlight ? FontWeight.w600 : FontWeight.normal,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -140,4 +140,6 @@ class ControllerBase extends GetxController {
     || connectivityResult.contains(ConnectivityResult.mobile)
     || connectivityResult.contains(ConnectivityResult.wifi);
   }
+
+  
 }
