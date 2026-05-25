@@ -42,7 +42,7 @@ dependencies:
   get: ^4.7.3
   crypto: ^3.0.3
   connectivity_plus: ^7.1.1
-  sentry_flutter: ^8.14.2
+  # sentry_flutter: ^8.14.2
 
 dev_dependencies:
   flutter_test:
