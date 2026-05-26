@@ -321,17 +321,19 @@ class _DecryptedRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         SizedBox(
-          width: 77,
+          width: 90,
           child: Text(
             label,
             style: const TextStyle(
               color: AppColors.white54,
-              fontSize: 10,
+              fontSize: 13,
               fontFamily: 'monospace',
-              letterSpacing: 1.2,
+              letterSpacing: 0.5,
+              height: 1.4,
             ),
           ),
         ),
@@ -341,7 +343,7 @@ class _DecryptedRow extends StatelessWidget {
             value,
             style: TextStyle(
               color: highlight ? AppColors.white : AppColors.white70,
-              fontSize: highlight ? 14 : 12,
+              fontSize: 13,
               fontFamily: 'monospace',
               fontWeight: highlight ? FontWeight.w600 : FontWeight.normal,
               height: 1.4,

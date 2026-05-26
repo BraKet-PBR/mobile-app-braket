@@ -269,17 +269,19 @@ class _StatusRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         SizedBox(
-          width: 60,
+          width: 70,
           child: Text(
             label,
             style: const TextStyle(
               color: AppColors.white54,
-              fontSize: 10,
+              fontSize: 13,
               fontFamily: 'monospace',
-              letterSpacing: 1.2,
+              letterSpacing: 0.5,
+              height: 1.4,
             ),
           ),
         ),
@@ -289,8 +291,9 @@ class _StatusRow extends StatelessWidget {
             value,
             style: const TextStyle(
               color: AppColors.white70,
-              fontSize: 12,
+              fontSize: 13,
               fontFamily: 'monospace',
+              height: 1.4,
             ),
           ),
         ),
