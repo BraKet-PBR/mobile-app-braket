@@ -26,6 +26,9 @@ class LoginController extends ControllerBase {
 
   bool isBusy = false;
 
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   LoginController({required this.tokenProvider, required this.loginService, required ApiUrlStorage apiUrlStorage, required Dio dio}) : _apiUrlStorage = apiUrlStorage, _dio = dio;
 
   @override
@@ -118,8 +121,10 @@ class LoginController extends ControllerBase {
     }
 
     await tokenProvider.saveToken(apiResponse.body!);
-    print("Username: ${await tokenProvider.getUsername()}"); //TODO: USUNĄĆ
 
+    clearLoginFields();
+
+    print("Username: ${await tokenProvider.getUsername()}"); //TODO: USUNĄĆ
 
     Get.offAllNamed('/home');
   }
@@ -170,6 +175,11 @@ class LoginController extends ControllerBase {
 
   void showInvalidCredentialsError() {
     popup(AppStrings.loginErrorTitle, AppStrings.invalidCredentials);
+  }
+
+  void clearLoginFields() {
+    usernameController.clear();
+    passwordController.clear();
   }
 
 }

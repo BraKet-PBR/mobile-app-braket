@@ -103,22 +103,22 @@ class HomeScreen extends StatelessWidget {
 
             children: [
 
+              _InfoCard(
+                children: [
+
 // ======================================================= Zalogowano jako: x
-              FutureBuilder<String?>(
-                future: tokenProvider.getUsername(),
-                builder: (context, snapshot) {
-                  // final username = snapshot.data; //TODO: odkomentować
-                  final username = "Mikołaj"; //TODO: usunąć
+                  FutureBuilder<String?>(
+                    future: tokenProvider.getUsername(),
+                    builder: (context, snapshot) {
+                      // final username = snapshot.data; //TODO: odkomentować
+                      final username = "Mikołaj"; //TODO: usunąć
 
-                  if (username == null) {
-                    return const SizedBox.shrink();
-                  }
+                      if (username == null) {
+                        return const SizedBox.shrink();
+                      }
 
-                  return Column(
-                    children: [
-                      _InfoCard(
+                      return Column(
                         children: [
-
                           _InfoRow(
                             label: AppStrings.loggedInAs,
                             value: username,
@@ -126,9 +126,7 @@ class HomeScreen extends StatelessWidget {
                           ),
 
                           const SizedBox(height: 10),
-
                           Container(height: 1, color: AppColors.divider),
-
                           const SizedBox(height: 10),
 
 // ======================================================= Status sesji: x
@@ -160,13 +158,74 @@ class HomeScreen extends StatelessWidget {
                             );
                           }),
                         ],
-                      ),
+                      );
+                    },
+                  ),
 
-                      const SizedBox(height: 20),
-                    ],
-                  );
-                },
+// ======================================================= Drugi uczestnik: x ID drugiego usera: x
+                  Obx(() {
+                    if (controller.otherUserId.value.isEmpty) {
+                      if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            Container(height: 1, color: AppColors.divider),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                  height: 10,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.amber,
+                                    strokeWidth: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  AppStrings.awaitingOtherPeer,
+                                  style: TextStyle(
+                                    color: AppColors.amber,
+                                    fontSize: 13,
+                                    fontFamily: 'monospace',
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Container(height: 1, color: AppColors.divider),
+                        const SizedBox(height: 10),
+                        _InfoRow(
+                          label: AppStrings.otherUser,
+                          value: controller.otherUsername.value,
+                          valueColor: AppColors.terminal_green,
+                        ),
+                        const SizedBox(height: 8),
+                        _InfoRow(
+                          label: AppStrings.otherUserId,
+                          value: controller.otherUserId.value,
+                          valueColor: AppColors.white54,
+                          monospace: true,
+                          small: true,
+                        ),
+                      ],
+                    );
+                  }),
+                ],
               ),
+
+              const SizedBox(height: 20),
 
 // ======================================================= Przycisk: Dołącz do sesji
               SizedBox(
@@ -217,66 +276,6 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
               ),
-
-              const SizedBox(height: 28),
-
-              Obx(() {
-                if (controller.otherUserId.value.isEmpty) {
-                  if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: AppColors.amber_dim,
-                        border: Border.all(color: AppColors.amber, width: 0.5),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(
-                            width: 10,
-                            height: 10,
-                            child: CircularProgressIndicator(
-                              color: AppColors.amber,
-                              strokeWidth: 1.5,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            AppStrings.awaitingOtherPeer,
-                            style: TextStyle(
-                              color: AppColors.amber,
-                              fontSize: 13,
-                              fontFamily: 'monospace',
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                }
-
-// ======================================================= Drugi uczestnik: x ID drugiego usera: x
-                return _InfoCard(
-                  children: [
-                    _InfoRow(
-                      label: AppStrings.otherUser,
-                      value: controller.otherUsername.value,
-                      valueColor: AppColors.terminal_green,
-                    ),
-                    const SizedBox(height: 8),
-                    _InfoRow(
-                      label: AppStrings.otherUserId,
-                      value: controller.otherUserId.value,
-                      valueColor: AppColors.white54,
-                      monospace: true,
-                      small: true,
-                    ),
-                  ],
-                );
-              }),
             ],
           ),
         ),
@@ -327,30 +326,32 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         SizedBox(
-          width: 130,
+          width: 155,
           child: Text(
             label,
             style: const TextStyle(
               color: AppColors.white54,
-              fontSize: 10,
+              fontSize: 13,
               fontFamily: 'monospace',
-              letterSpacing: 1.5,
+              letterSpacing: 0.5,
+              height: 1.4,
             ),
           ),
         ),
-        const SizedBox(width: 8),
         Expanded(
           child: Text(
             value,
             style: TextStyle(
               color: valueColor,
-              fontSize: small ? 11 : 13,
-              fontFamily: monospace ? 'monospace' : null,
+              fontSize: 13,
+              fontFamily: 'monospace',
               fontWeight: FontWeight.w500,
-              letterSpacing: monospace ? 0.3 : 0,
+              letterSpacing: 0.3,
+              height: 1.4,
             ),
           ),
         ),

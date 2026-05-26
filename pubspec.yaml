@@ -42,7 +42,8 @@ dependencies:
   get: ^4.7.3
   crypto: ^3.0.3
   connectivity_plus: ^7.1.1
-  # sentry_flutter: ^8.14.2
+  flutter_launcher_icons: ^0.14.4
+  # sentry_flutter: ^8.14.2 TODO 
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,7 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
 
 # The following section is specific to Flutter packages.
 flutter:
