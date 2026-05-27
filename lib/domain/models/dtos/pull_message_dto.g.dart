@@ -7,7 +7,7 @@ part of 'pull_message_dto.dart';
 // **************************************************************************
 
 PullMessageDto _$PullMessageDtoFromJson(Map<String, dynamic> json) =>
-    PullMessageDto(sessionId: json['sessionId'] as String);
+    PullMessageDto(sessionId: json['session_id'] as String);
 
 Map<String, dynamic> _$PullMessageDtoToJson(PullMessageDto instance) =>
-    <String, dynamic>{'sessionId': instance.sessionId};
+    <String, dynamic>{'session_id': instance.sessionId};

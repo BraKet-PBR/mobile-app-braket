@@ -8,9 +8,9 @@ part of 'create_session_dto.dart';
 
 CreateSessionDto _$CreateSessionDtoFromJson(Map<String, dynamic> json) =>
     CreateSessionDto(
-      userId: json['userId'] as String,
-      keyHash: json['keyHash'] as String,
+      userId: json['user_id'] as String,
+      keyHash: json['key_hash'] as String,
     );
 
 Map<String, dynamic> _$CreateSessionDtoToJson(CreateSessionDto instance) =>
-    <String, dynamic>{'userId': instance.userId, 'keyHash': instance.keyHash};
+    <String, dynamic>{'user_id': instance.userId, 'key_hash': instance.keyHash};

@@ -6,7 +6,7 @@ import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/core/cryptoServices/encryption_service.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
 import 'package:mobile_app_braket/domain/models/encryption_result.dart';
-import 'package:mobile_app_braket/domain/models/send_message_dto.dart';
+import 'package:mobile_app_braket/domain/models/dtos/send_message_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
 class MessageController extends ControllerBase {
