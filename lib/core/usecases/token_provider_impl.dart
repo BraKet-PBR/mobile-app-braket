@@ -5,17 +5,23 @@ import 'package:mobile_app_braket/core/usecases/token_provider.dart';
 
 class TokenProviderImpl implements TokenProvider {
   final FlutterSecureStorage _storage;
+  static const _tokenStorageKey = 'apiToken';
 
   TokenProviderImpl(this._storage);
 
   @override
   Future<String?> getToken() async {
-    return await _storage.read(key: 'apiToken');
+    return await _storage.read(key: _tokenStorageKey);
   }
 
   @override
   Future<void> saveToken(String token) async {
-    await _storage.write(key: 'apiToken', value: token);
+    await _storage.write(key: _tokenStorageKey, value: token);
+  }
+
+  @override
+  Future<void> deleteToken() async {
+    await _storage.delete(key: _tokenStorageKey);
   }
 
   @override

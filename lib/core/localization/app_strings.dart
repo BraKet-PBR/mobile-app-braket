@@ -12,6 +12,10 @@ class AppStrings {
   static const String sessionExpiresInStatic = "SESJA WYGAŚNIE ZA:";
   static const String otherUser = "DRUGI UŻYTKOWNIK:";
   static const String otherUserId = "ID DRUGIEGO UŻYTKOWNIKA:";
+  static const String yes = "Tak";
+  static const String no = "Nie";
+  static const String logoutConfirmTitle = "Wylogowanie";
+  static const String logoutConfirmMessage = "Czy na pewno chcesz się wylogować? Spowoduje to usunięcie wszystkich danych z aplikacji, w tym kluczy i aktywnych sesji.";
 
   // login_screen.dart
   static const String moreInfo = "Więcej informacji";
@@ -42,13 +46,11 @@ class AppStrings {
   static String plaintext = "PLAINTEXT:";
   static String alg = "ALGORYTM:";
   static String created = "UTWORZONO:";
+  static String exitScreenPopupTitle = "Uwaga!";
+  static String exitScreenPopupMessage = "Opuszczenie ekranu spowoduje usunięcie wiadomości. Czy na pewno chcesz opuścić ekran?";
 
   // controller_base.dart
   static const String ok = "Ok";
-  static const String yes = "Tak";
-  static const String no = "Nie";
-  static const String logoutConfirmTitle = "Wylogowanie";
-  static const String logoutConfirmMessage = "Czy na pewno chcesz się wylogować? Spowoduje to usunięcie wszystkich danych z aplikacji, w tym kluczy i aktywnych sesji.";
   static const String error = "Błąd";
   static const String noInternet = "Brak połączenia z internetem";
   static const String requestFailed = "Nie udało się wysłać żądania, spróbuj ponownie później.";

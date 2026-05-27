@@ -3,4 +3,5 @@ abstract class TokenProvider {
   Future<String?> getToken();
   Future<String?> getUsername();
   Future<void> saveToken(String token);
+  Future<void> deleteToken();
 }
