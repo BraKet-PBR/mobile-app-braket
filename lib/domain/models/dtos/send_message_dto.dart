@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'send_message_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class SendMessageDto {
   final String sessionId;
   final String ciphertext;

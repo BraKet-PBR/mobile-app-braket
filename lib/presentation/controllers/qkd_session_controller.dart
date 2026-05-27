@@ -9,7 +9,7 @@ import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
-import 'package:mobile_app_braket/domain/models/join_session_dto.dart';
+import 'package:mobile_app_braket/domain/models/dtos/join_session_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
 class QkdSessionController extends ControllerBase {

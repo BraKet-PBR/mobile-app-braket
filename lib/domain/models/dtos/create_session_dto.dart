@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'create_session_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CreateSessionDto {
   final String userId;
   final String keyHash;

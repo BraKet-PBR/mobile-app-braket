@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'pull_message_response.g.dart';
+part 'pull_message_response_dto.g.dart';
 
-@JsonSerializable()
-class PullMessageResponse {
+@JsonSerializable(fieldRename: FieldRename.snake)
+class PullMessageResponseDto {
   final String messageId;
   final String ciphertext;
   final String messageNonce;
@@ -11,7 +11,7 @@ class PullMessageResponse {
   final String createdAt;
   final String mayoSignature;
 
-  PullMessageResponse({
+  PullMessageResponseDto({
     required this.messageId,
     required this.ciphertext,
     required this.messageNonce,
@@ -20,8 +20,8 @@ class PullMessageResponse {
     required this.mayoSignature,
   });
 
-  factory PullMessageResponse.fromJson(Map<String, dynamic> json) =>
-      _$PullMessageResponseFromJson(json);
+  factory PullMessageResponseDto.fromJson(Map<String, dynamic> json) =>
+      _$PullMessageResponseDtoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PullMessageResponseToJson(this);
+  Map<String, dynamic> toJson() => _$PullMessageResponseDtoToJson(this);
 }

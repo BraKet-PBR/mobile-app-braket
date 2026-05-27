@@ -8,18 +8,18 @@ part of 'send_message_dto.dart';
 
 SendMessageDto _$SendMessageDtoFromJson(Map<String, dynamic> json) =>
     SendMessageDto(
-      sessionId: json['sessionId'] as String,
+      sessionId: json['session_id'] as String,
       ciphertext: json['ciphertext'] as String,
-      messageNonce: json['messageNonce'] as String,
+      messageNonce: json['message_nonce'] as String,
       algorithm: json['algorithm'] as String,
-      mayoSignature: json['mayoSignature'] as String,
+      mayoSignature: json['mayo_signature'] as String,
     );
 
 Map<String, dynamic> _$SendMessageDtoToJson(SendMessageDto instance) =>
     <String, dynamic>{
-      'sessionId': instance.sessionId,
+      'session_id': instance.sessionId,
       'ciphertext': instance.ciphertext,
-      'messageNonce': instance.messageNonce,
+      'message_nonce': instance.messageNonce,
       'algorithm': instance.algorithm,
-      'mayoSignature': instance.mayoSignature,
+      'mayo_signature': instance.mayoSignature,
     };
