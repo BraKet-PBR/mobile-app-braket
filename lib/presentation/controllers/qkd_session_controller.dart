@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
@@ -62,24 +63,36 @@ class QkdSessionController extends ControllerBase {
     isBusy = true;
 
     try {
+      
       if (!await hasInternetConnection()) return;
 
-      //TODO tutaj wywołanie symulatora qkd
-      final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
-      if (response_simulator.statusCode != 200 || response_simulator.body == null) {
-        await popup(
-          AppStrings.qkdUnexpectedErrorTitle,
-          AppStrings.qkdSimulatorError,
-        );
-        return;
+// ======================================================= Symulator QKD
+      showLoadingPopup(
+        title: AppStrings.qkdString,
+        message: AppStrings.qdkSessionInProgress,
+      );
+
+      try {
+        final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
+        if (response_simulator.statusCode != 200 || response_simulator.body == null) {
+          await popup(
+            AppStrings.qkdUnexpectedErrorTitle,
+            AppStrings.qkdSimulatorError,
+          );
+        }
+      } on DioException catch (e) {
+        await handleSomethingWentWrong(e);
+      } finally {
+        hideLoadingPopup();
       }
+
 
       final storedKey = await aesKeyStorage.getKey();
       if (storedKey == null || storedKey.isEmpty) {
         await popup(AppStrings.qkdNoKeyTitle, AppStrings.qkdNoKeyMessage);
         return;
       }
-
+// ======================================================= Generowanie kluczy MAYO
       await mayoService.generateMayoKeyPairAndStore();
 
       final mayoPublicSelfKey = await mayoStorage.getMayoPublicSelf();
@@ -88,6 +101,7 @@ class QkdSessionController extends ControllerBase {
         return;
       }
 
+// ======================================================= Ustalenie sesji zwykłej
       final keyHash = sha256.convert(utf8.encode(storedKey)).toString();
 
       final response = await qkdSessionService.joinSession(
@@ -118,8 +132,10 @@ class QkdSessionController extends ControllerBase {
         await fetchOtherUser();
       }
     } catch (e) {
+      hideLoadingPopup();
       await handleSomethingWentWrong(e);
     } finally {
+      hideLoadingPopup();
       isBusy = false;
     }
   }
