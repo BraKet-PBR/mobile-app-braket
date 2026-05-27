@@ -24,11 +24,13 @@ import 'package:mobile_app_braket/data/datasources/qkd_session_service_impl.dart
 
 import 'package:mobile_app_braket/core/cryptoServices/encryption_service.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
+import 'package:mobile_app_braket/data/datasources/qkd_simulator_service_impl.dart';
 import 'package:mobile_app_braket/domain/external_services/login_service.dart';
 import 'package:mobile_app_braket/domain/external_services/message_service.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
 
 import 'package:mobile_app_braket/core/usecases/token_provider.dart';
+import 'package:mobile_app_braket/domain/external_services/qkd_simulator_service.dart';
 
 import 'package:mobile_app_braket/presentation/controllers/login_controller.dart';
 import 'package:mobile_app_braket/presentation/controllers/message_controller.dart';
@@ -89,6 +91,13 @@ Future<void> main() async {
     ),
   );
 
+  Get.put<QkdSimulatorService>(
+    QkdSimulatorServiceImpl(
+      dio,
+      tokenProvider: Get.find<TokenProvider>(),
+    ),
+  );
+
   Get.put<MessageService>(
     MessageServiceImpl(
       dio,
@@ -128,6 +137,7 @@ Future<void> main() async {
       aesKeyStorage: Get.find<AESKeyStorage>(),
       mayoStorage: Get.find<MayoStorage>(),
       mayoService: Get.find<MayoService>(),
+      qkdSimulatorService: Get.find<QkdSimulatorService>(),
     ),
   );
 

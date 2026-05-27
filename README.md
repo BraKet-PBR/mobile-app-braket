@@ -1,6 +1,10 @@
+# Jak uruchomić projekt
+- Aplikacje mobilną na platformę Android można zainstalować z pliku `.apk`. Plik znajduje się w repozytorium Documentation/APK. Należy pobrać go na urządzenie / emulator i zainstalować zgodnie z instrukcjami wyświetlanymi na ekranie. Może być konieczne włączenie opcji instalacji aplikacji z nieznanych źródeł. 
+    - https://github.com/BraKet-PBR/Documentation/tree/main/APK
+    - Minimalna wymagana wersja systemu to `Android 5`
+
+
 # Jak uruchomić projekt jako developer
-
-
 ## Wymagania wstępne
 
 Zainstalowane:

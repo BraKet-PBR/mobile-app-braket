@@ -9,6 +9,7 @@ import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
+import 'package:mobile_app_braket/domain/external_services/qkd_simulator_service.dart';
 import 'package:mobile_app_braket/domain/models/dtos/join_session_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
@@ -18,6 +19,7 @@ class QkdSessionController extends ControllerBase {
   final AESKeyStorage aesKeyStorage;
   final MayoStorage mayoStorage;
   final MayoService mayoService;
+  final QkdSimulatorService qkdSimulatorService;
 
   QkdSessionController({
     required this.qkdSessionService,
@@ -25,6 +27,7 @@ class QkdSessionController extends ControllerBase {
     required this.aesKeyStorage,
     required this.mayoStorage,
     required this.mayoService,
+    required this.qkdSimulatorService,
   });
 
   final RxString otherUserId = ''.obs;
@@ -60,6 +63,16 @@ class QkdSessionController extends ControllerBase {
 
     try {
       if (!await hasInternetConnection()) return;
+
+      //TODO tutaj wywołanie symulatora qkd
+      final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
+      if (response_simulator.statusCode != 200 || response_simulator.body == null) {
+        await popup(
+          AppStrings.qkdUnexpectedErrorTitle,
+          AppStrings.qkdSimulatorError,
+        );
+        return;
+      }
 
       final storedKey = await aesKeyStorage.getKey();
       if (storedKey == null || storedKey.isEmpty) {
