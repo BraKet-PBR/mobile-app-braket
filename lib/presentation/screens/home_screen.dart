@@ -85,6 +85,7 @@ class HomeScreen extends StatelessWidget {
               await aesStorage.clear();
               await mayoStorage.clear();
               await flutterStorage.delete(key: 'apiToken');
+              await tokenProvider.deleteToken();
               dio.options.baseUrl = '';
 
               Get.offAllNamed('/login');

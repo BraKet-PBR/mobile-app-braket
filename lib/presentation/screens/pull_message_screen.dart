@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 import 'package:mobile_app_braket/presentation/controllers/pull_message_controller.dart';
+import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 
 class PullMessageScreen extends StatefulWidget {
@@ -23,8 +24,20 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldExit = await ControllerBase().confirm(
+          AppStrings.exitScreenPopupTitle,
+          AppStrings.exitScreenPopupMessage,
+        );
+        if (shouldExit) {
+          Get.back();
+        }
+      },
+      child: Scaffold(
+      backgroundColor: AppColors.surface,  
 
 // ======================================================= Tytuł na pasku na górze
       appBar: AppBar(
@@ -302,6 +315,7 @@ class _PullMessageScreenState extends State<PullMessageScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
