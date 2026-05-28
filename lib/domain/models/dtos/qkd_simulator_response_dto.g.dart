@@ -10,9 +10,9 @@ QkdSimulatorResponseDto _$QkdSimulatorResponseDtoFromJson(
   Map<String, dynamic> json,
 ) => QkdSimulatorResponseDto(
   keyMaterial: json['key_material'] as String,
-  status: json['status'] as String,
-  stats: json['stats'] as String,
-  failureReason: json['failure_reason'] as String,
+  status: json['status'] as String?,
+  stats: json['stats'],
+  failureReason: json['failure_reason'] as String?,
 );
 
 Map<String, dynamic> _$QkdSimulatorResponseDtoToJson(

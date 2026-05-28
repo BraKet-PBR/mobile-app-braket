@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_native.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
@@ -46,9 +48,50 @@ class QkdSessionController extends ControllerBase {
   bool isPolling = false;
   bool isBusy = false;
 
+  Future<void> runMayoSmokeTest() async {
+    try {
+      final mayo = MayoNative.instance;
+      final keyPair = mayo.generateKeyPair();
+      final message = Uint8List.fromList(utf8.encode('MAYO app test'));
+
+      final signature = mayo.sign(
+        message: message,
+        privateKey: keyPair.privateKey,
+      );
+
+      final originalValid = mayo.verify(
+        message: message,
+        signature: signature,
+        publicKey: keyPair.publicKey,
+      );
+
+      final changedMessage = Uint8List.fromList(
+        utf8.encode('MAYO app test changed'),
+      );
+
+      final changedValid = mayo.verify(
+        message: changedMessage,
+        signature: signature,
+        publicKey: keyPair.publicKey,
+      );
+
+      final passed = originalValid && !changedValid;
+      final result = [
+        'Wynik: ${passed ? "PASSED" : "FAILED"}',
+        'Klucz publiczny: ${keyPair.publicKey.length} B',
+        'Klucz prywatny: ${keyPair.privateKey.length} B',
+        'Podpis: ${signature.length} B',
+        'Oryginalna wiadomosc poprawna: ${originalValid ? "TAK" : "NIE"}',
+        'Zmieniona wiadomosc odrzucona: ${!changedValid ? "TAK" : "NIE"}',
+      ].join('\n');
+
+      await popup('Test MAYO', result);
+    } catch (e) {
+      await popup('Test MAYO', 'Nie udalo sie uruchomic testu MAYO.\n$e');
+    }
+  }
 
   Future<void> joinOrStartSession() async {
-
     // ========================= TODO: usunąć
     otherUserId.value = "cdcd3280-fb85-4175-9778-3a6f8bc2606c";
     otherUsername.value = "Andrzej";
@@ -63,45 +106,60 @@ class QkdSessionController extends ControllerBase {
     isBusy = true;
 
     try {
-      
       if (!await hasInternetConnection()) return;
 
-// ======================================================= Symulator QKD
+      // ======================================================= Symulator QKD
       showLoadingPopup(
         title: AppStrings.qkdString,
         message: AppStrings.qdkSessionInProgress,
       );
 
       try {
-        final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
-        if (response_simulator.statusCode != 200 || response_simulator.body == null) {
+        final simulatorResponse = await qkdSimulatorService.getAesKeyFromQkd();
+        if (simulatorResponse.error != null) {
+          hideLoadingPopup();
+          await handleSomethingWentWrong(simulatorResponse.error);
+          return;
+        }
+
+        if (simulatorResponse.statusCode != 200 ||
+            simulatorResponse.body == null ||
+            simulatorResponse.body!.keyMaterial.isEmpty) {
+          hideLoadingPopup();
           await popup(
             AppStrings.qkdUnexpectedErrorTitle,
             AppStrings.qkdSimulatorError,
           );
+          return;
         }
+
+        await aesKeyStorage.saveKey(simulatorResponse.body!.keyMaterial);
       } on DioException catch (e) {
+        hideLoadingPopup();
         await handleSomethingWentWrong(e);
+        return;
       } finally {
         hideLoadingPopup();
       }
-
 
       final storedKey = await aesKeyStorage.getKey();
       if (storedKey == null || storedKey.isEmpty) {
         await popup(AppStrings.qkdNoKeyTitle, AppStrings.qkdNoKeyMessage);
         return;
       }
-// ======================================================= Generowanie kluczy MAYO
+      // ======================================================= Generowanie kluczy MAYO
       await mayoService.generateMayoKeyPairAndStore();
 
       final mayoPublicSelfKey = await mayoStorage.getMayoPublicSelf();
       if (mayoPublicSelfKey == null || mayoPublicSelfKey.isEmpty) {
-        await popup(AppStrings.qkdNoMayoKeyTitle, AppStrings.qkdNoMayoKeyMessage);
+        await popup(
+          AppStrings.qkdNoMayoKeyTitle,
+          AppStrings.qkdNoMayoKeyMessage,
+        );
         return;
       }
 
-// ======================================================= Ustalenie sesji zwykłej
+      // ======================================================= Ustalenie sesji zwykłej
       final keyHash = sha256.convert(utf8.encode(storedKey)).toString();
 
       final response = await qkdSessionService.joinSession(
@@ -140,8 +198,6 @@ class QkdSessionController extends ControllerBase {
     }
   }
 
-
-
   Future<void> fetchOtherUser() async {
     final response = await qkdSessionService.getOtherSessionUser();
 
@@ -157,8 +213,6 @@ class QkdSessionController extends ControllerBase {
 
     _stopPolling();
   }
-
-
 
   void _startPolling() {
     if (isPolling) return;
@@ -178,15 +232,11 @@ class QkdSessionController extends ControllerBase {
     });
   }
 
-
-
   void _stopPolling() {
     _pollTimer?.cancel();
     _pollTimer = null;
     isPolling = false;
   }
-
-
 
   void _startCountdown() {
     _countdownTimer?.cancel();
@@ -198,8 +248,6 @@ class QkdSessionController extends ControllerBase {
 
     _updateCountdown();
   }
-
-
 
   void _updateCountdown() {
     final expiresAt = sessionExpiresAt.value;
@@ -233,7 +281,6 @@ class QkdSessionController extends ControllerBase {
     _countdownTimer = null;
   }
 
-
   Future<void> _expireSession() async {
     sessionStatus.value = 'expired';
 
@@ -243,7 +290,6 @@ class QkdSessionController extends ControllerBase {
     _stopPolling();
     _stopCountdown();
 
-
     final qkdStorage = Get.find<QkdSessionStorage>();
     final aesStorage = Get.find<AESKeyStorage>();
     final mayoStorage = Get.find<MayoStorage>();
@@ -251,13 +297,10 @@ class QkdSessionController extends ControllerBase {
     await qkdStorage.clear();
     await aesStorage.clear();
     await mayoStorage.clear();
-  
 
     otherUserId.value = '';
     otherUsername.value = '';
   }
-
-
 
   void clearSession() {
     _stopPolling();
@@ -276,7 +319,6 @@ class QkdSessionController extends ControllerBase {
     _stopCountdown();
     super.onClose();
   }
-
 
   bool get isSessionActive {
     final status = sessionStatus.value.toLowerCase();

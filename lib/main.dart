@@ -42,8 +42,9 @@ import 'package:mobile_app_braket/presentation/screens/home_screen.dart';
 import 'package:mobile_app_braket/presentation/screens/login_screen.dart';
 import 'package:mobile_app_braket/presentation/screens/pull_message_screen.dart';
 
-Future<void> main() async {
+const _qkdSimulatorDioTag = 'qkdSimulatorDio';
 
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await GetStorage.init();
@@ -58,10 +59,9 @@ Future<void> main() async {
     ),
   );
 
-
   // Generowanie klucza qkd na symulatorze trwa około 90 sekund
   // Dopiero wtedy endpoint odpowie stąd wydłużenie czasu
-  final dio_sim = Dio(
+  final qkdSimulatorDio = Dio(
     BaseOptions(
       baseUrl: '',
       connectTimeout: const Duration(seconds: 120),
@@ -71,67 +71,45 @@ Future<void> main() async {
 
   Get.put<FlutterSecureStorage>(storage);
   Get.put<Dio>(dio);
-  Get.put<Dio>(dio_sim);
+  Get.put<Dio>(qkdSimulatorDio, tag: _qkdSimulatorDioTag);
 
-  Get.put<ApiUrlStorage>(
-    ApiUrlStorageImpl(storage),
-  );
+  Get.put<ApiUrlStorage>(ApiUrlStorageImpl(storage));
 
   final apiUrlStorage = Get.find<ApiUrlStorage>();
   final savedApiUrl = await apiUrlStorage.getApiUrl();
   if (savedApiUrl != null && savedApiUrl.isNotEmpty) {
     dio.options.baseUrl = savedApiUrl;
+    qkdSimulatorDio.options.baseUrl = savedApiUrl;
   }
 
+  Get.put<TokenProvider>(TokenProviderImpl(storage));
 
-  Get.put<TokenProvider>(
-    TokenProviderImpl(storage),
-  );
+  Get.put<QkdSessionStorage>(QkdSessionStorageImpl(storage));
 
-  Get.put<QkdSessionStorage>(
-    QkdSessionStorageImpl(storage),
-  );
-
-  Get.put<LoginService>(
-    LoginServiceImpl(dio),
-  );
+  Get.put<LoginService>(LoginServiceImpl(dio));
 
   Get.put<QkdSessionService>(
-    QkdSessionServiceImpl(
-      dio,
-      tokenProvider: Get.find<TokenProvider>(),
-    ),
+    QkdSessionServiceImpl(dio, tokenProvider: Get.find<TokenProvider>()),
   );
 
   Get.put<QkdSimulatorService>(
     QkdSimulatorServiceImpl(
-      dio_sim,
+      qkdSimulatorDio,
       tokenProvider: Get.find<TokenProvider>(),
     ),
   );
 
   Get.put<MessageService>(
-    MessageServiceImpl(
-      dio,
-      tokenProvider: Get.find<TokenProvider>(),
-    ),
+    MessageServiceImpl(dio, tokenProvider: Get.find<TokenProvider>()),
   );
 
-  Get.put<EncryptionService>(
-    EncryptionServiceImpl(),
-  );
+  Get.put<EncryptionService>(EncryptionServiceImpl());
 
-  Get.put<AESKeyStorage>(
-    AESKeyStorageImpl(storage),
-  );
+  Get.put<AESKeyStorage>(AESKeyStorageImpl(storage));
 
-  Get.put<MayoStorage>(
-    MayoStorageImpl(storage),
-  );
+  Get.put<MayoStorage>(MayoStorageImpl(storage));
 
-  Get.put<MayoService>(
-    MayoServiceImpl(Get.find<MayoStorage>()),
-  );
+  Get.put<MayoService>(MayoServiceImpl(Get.find<MayoStorage>()));
 
   Get.put(
     LoginController(
@@ -139,6 +117,7 @@ Future<void> main() async {
       loginService: Get.find<LoginService>(),
       apiUrlStorage: Get.find<ApiUrlStorage>(),
       dio: Get.find<Dio>(),
+      qkdSimulatorDio: Get.find<Dio>(tag: _qkdSimulatorDioTag),
     ),
   );
 
@@ -177,12 +156,10 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
 
@@ -196,25 +173,13 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
 
       getPages: [
-        GetPage(
-          name: '/login',
-          page: () => LoginScreen(),
-        ),
+        GetPage(name: '/login', page: () => LoginScreen()),
 
-        GetPage(
-          name: '/home',
-          page: () => HomeScreen(),
-        ),
+        GetPage(name: '/home', page: () => HomeScreen()),
 
-        GetPage(
-          name: '/message',
-          page: () => const MessageScreen(),
-        ),
+        GetPage(name: '/message', page: () => const MessageScreen()),
 
-        GetPage(
-          name: '/pull-message',
-          page: () => const PullMessageScreen(),
-        ),
+        GetPage(name: '/pull-message', page: () => const PullMessageScreen()),
       ],
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// ignore_for_file: constant_identifier_names
+
 class AppColors {
   static const Color red = Color(0xFFc62e2e);
   static const Color red_dark = Color.fromARGB(255, 83, 19, 19);

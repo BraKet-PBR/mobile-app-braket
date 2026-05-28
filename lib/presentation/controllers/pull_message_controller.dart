@@ -33,16 +33,6 @@ class PullMessageController extends ControllerBase {
   bool isBusy = false;
 
   Future<void> pullMessage() async {
-
-    // ========================= TODO: usunąć
-    messageId.value = "11d0417e-0c5b-49cf-8734-623966424170";
-    //ciphertext.value = ""; //to raczej nie potrzebne bedzie tutaj bo nie idzie na screen
-    plaintext.value = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
-    algorithm.value = "AES-GCM-256";
-    createdAt.value = "2026-05-25T09:14:47+00:00";
-    hasMessage.value = true;
-    // ========================= TODO: usunąć
-
     if (isBusy) {
       return;
     }
@@ -56,7 +46,10 @@ class PullMessageController extends ControllerBase {
 
       final sessionId = await qkdSessionStorage.getSessionId();
       if (sessionId == null || sessionId.isEmpty) {
-        await popup(AppStrings.pullNoSessionTitle, AppStrings.pullNoSessionMessage);
+        await popup(
+          AppStrings.pullNoSessionTitle,
+          AppStrings.pullNoSessionMessage,
+        );
         return;
       }
 
@@ -68,20 +61,29 @@ class PullMessageController extends ControllerBase {
 
       // 404 oznacza że wszystko jest ok tylko nie ma nowych wiadomości dla danego usera
       if (response.statusCode == 404) {
-          await popup(AppStrings.pullNoMessagesTitle, AppStrings.pullNoMessagesMessage);
-          return;
-      } 
+        await popup(
+          AppStrings.pullNoMessagesTitle,
+          AppStrings.pullNoMessagesMessage,
+        );
+        return;
+      }
 
       if (response.statusCode != 200 || response.body == null) {
-        await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.pullMessageFailed);
+        await popup(
+          AppStrings.pullUnexpectedErrorTitle,
+          AppStrings.pullMessageFailed,
+        );
         return;
       }
 
       bool isSignatureValid = false;
       try {
-        isSignatureValid = await mayoService.validateSignature(
-          response.body!.ciphertext,
-          response.body!.mayoSignature,
+        isSignatureValid = await mayoService.validateMessagePayloadSignature(
+          sessionId: sessionId,
+          ciphertext: response.body!.ciphertext,
+          messageNonce: response.body!.messageNonce,
+          algorithm: response.body!.algorithm,
+          signature: response.body!.mayoSignature,
         );
       } catch (error) {
         await popup(AppStrings.error, AppStrings.pullNoMayoPeerKey);
@@ -89,7 +91,10 @@ class PullMessageController extends ControllerBase {
       }
 
       if (!isSignatureValid) {
-        await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.pullInvalidSignature);
+        await popup(
+          AppStrings.pullUnexpectedErrorTitle,
+          AppStrings.pullInvalidSignature,
+        );
         return;
       }
 
@@ -99,16 +104,25 @@ class PullMessageController extends ControllerBase {
       algorithm.value = response.body!.algorithm;
       createdAt.value = response.body!.createdAt;
 
-
       final aesKey = await aesKeyStorage.getKey();
       if (aesKey == null || aesKey.isEmpty) {
-        await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.messageNoAesKeyMessage);
+        await popup(
+          AppStrings.pullUnexpectedErrorTitle,
+          AppStrings.messageNoAesKeyMessage,
+        );
         return;
       }
 
-        final decrypted = await encryptionService.decrypt(cid, aesKey, response.body!.messageNonce);
+      final decrypted = await encryptionService.decrypt(
+        cid,
+        aesKey,
+        response.body!.messageNonce,
+      );
       if (decrypted.isEmpty) {
-        await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.pullDecryptFailed);
+        await popup(
+          AppStrings.pullUnexpectedErrorTitle,
+          AppStrings.pullDecryptFailed,
+        );
         return;
       }
 
