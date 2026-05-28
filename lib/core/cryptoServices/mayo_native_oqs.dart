@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -20,7 +21,7 @@ class MayoNative {
 
   MayoNative._();
 
-  MayoKeyPair generateKeyPair() {
+  FutureOr<MayoKeyPair> generateKeyPair() {
     final signature = _createSignature();
     try {
       final keyPair = signature.generateKeyPair();
@@ -33,7 +34,10 @@ class MayoNative {
     }
   }
 
-  Uint8List sign({required Uint8List message, required Uint8List privateKey}) {
+  FutureOr<Uint8List> sign({
+    required Uint8List message,
+    required Uint8List privateKey,
+  }) {
     final signature = _createSignature();
     try {
       return signature.sign(message, privateKey);
@@ -42,7 +46,7 @@ class MayoNative {
     }
   }
 
-  bool verify({
+  FutureOr<bool> verify({
     required Uint8List message,
     required Uint8List signature,
     required Uint8List publicKey,

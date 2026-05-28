@@ -66,7 +66,7 @@ class MayoServiceImpl implements MayoService {
       return;
     }
 
-    final keyPair = _mayoNative.generateKeyPair();
+    final keyPair = await _mayoNative.generateKeyPair();
     await _mayoStorage.saveMayoPublicSelf(_encodeBytes(keyPair.publicKey));
     await _mayoStorage.saveMayoPrivate(_encodeBytes(keyPair.privateKey));
   }
@@ -78,7 +78,7 @@ class MayoServiceImpl implements MayoService {
       throw StateError('Klucz prywatny Mayo nie znaleziony w local storage.');
     }
 
-    return _sign(
+    return await _sign(
       privateKey: privateKey,
       message: _canonicalBytes({'ciphertext': ciphertext}),
     );
@@ -96,7 +96,7 @@ class MayoServiceImpl implements MayoService {
       throw StateError('Klucz prywatny Mayo nie znaleziony w local storage.');
     }
 
-    return _sign(
+    return await _sign(
       privateKey: privateKey,
       message: _buildMessagePayload(
         sessionId: sessionId,
@@ -121,22 +121,25 @@ class MayoServiceImpl implements MayoService {
     });
   }
 
-  String _sign({required String privateKey, required Uint8List message}) {
+  Future<String> _sign({
+    required String privateKey,
+    required Uint8List message,
+  }) async {
     final privateKeyBytes = _decodeBytes(privateKey);
-    final signature = _mayoNative.sign(
+    final signature = await _mayoNative.sign(
       message: message,
       privateKey: privateKeyBytes,
     );
     return _encodeBytes(signature);
   }
 
-  bool _verify({
+  Future<bool> _verify({
     required String publicKey,
     required Uint8List message,
     required String signature,
-  }) {
+  }) async {
     try {
-      return _mayoNative.verify(
+      return await _mayoNative.verify(
         message: message,
         signature: _decodeBytes(signature),
         publicKey: _decodeBytes(publicKey),

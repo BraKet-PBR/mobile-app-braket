@@ -51,15 +51,15 @@ class QkdSessionController extends ControllerBase {
   Future<void> runMayoSmokeTest() async {
     try {
       final mayo = MayoNative.instance;
-      final keyPair = mayo.generateKeyPair();
+      final keyPair = await mayo.generateKeyPair();
       final message = Uint8List.fromList(utf8.encode('MAYO app test'));
 
-      final signature = mayo.sign(
+      final signature = await mayo.sign(
         message: message,
         privateKey: keyPair.privateKey,
       );
 
-      final originalValid = mayo.verify(
+      final originalValid = await mayo.verify(
         message: message,
         signature: signature,
         publicKey: keyPair.publicKey,
@@ -69,7 +69,7 @@ class QkdSessionController extends ControllerBase {
         utf8.encode('MAYO app test changed'),
       );
 
-      final changedValid = mayo.verify(
+      final changedValid = await mayo.verify(
         message: changedMessage,
         signature: signature,
         publicKey: keyPair.publicKey,
