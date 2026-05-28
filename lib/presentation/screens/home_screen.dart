@@ -13,7 +13,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 
 class HomeScreen extends StatelessWidget {
-
   HomeScreen({super.key});
 
   final QkdSessionController controller = Get.find<QkdSessionController>();
@@ -58,11 +57,18 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            tooltip: 'Test MAYO',
             icon: const Icon(
-              Icons.logout,
+              Icons.security,
               color: AppColors.white54,
               size: 20,
             ),
+            onPressed: () async {
+              await controller.runMayoSmokeTest();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: AppColors.white54, size: 20),
             onPressed: () async {
               final shouldLogout = await ControllerBase().confirm(
                 AppStrings.logoutConfirmTitle,
@@ -103,17 +109,16 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-
               _InfoCard(
                 children: [
-
-// ======================================================= Zalogowano jako: x
+                  // ======================================================= Zalogowano jako: x
                   FutureBuilder<String?>(
                     future: tokenProvider.getUsername(),
                     builder: (context, snapshot) {
                       // final username = snapshot.data; //TODO: odkomentować
                       final username = "Mikołaj"; //TODO: usunąć
 
+                      // ignore: unnecessary_null_comparison, dead_code
                       if (username == null) {
                         return const SizedBox.shrink();
                       }
@@ -130,7 +135,7 @@ class HomeScreen extends StatelessWidget {
                           Container(height: 1, color: AppColors.divider),
                           const SizedBox(height: 10),
 
-// ======================================================= Status sesji: x
+                          // ======================================================= Status sesji: x
                           Obx(() {
                             final status = controller.sessionStatus.value;
                             final isActive = controller.isSessionActive;
@@ -147,7 +152,7 @@ class HomeScreen extends StatelessWidget {
 
                           const SizedBox(height: 10),
 
-// ======================================================= Sesja wygaśnie za: x
+                          // ======================================================= Sesja wygaśnie za: x
                           Obx(() {
                             final text = controller.sessionExpiryText.value;
 
@@ -163,10 +168,11 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
 
-// ======================================================= Drugi uczestnik: x ID drugiego usera: x
+                  // ======================================================= Drugi uczestnik: x ID drugiego usera: x
                   Obx(() {
                     if (controller.otherUserId.value.isEmpty) {
-                      if (controller.sessionStatus.value.toLowerCase() == 'waiting_peer') {
+                      if (controller.sessionStatus.value.toLowerCase() ==
+                          'waiting_peer') {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -228,7 +234,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-// ======================================================= Przycisk: Dołącz do sesji
+              // ======================================================= Przycisk: Dołącz do sesji
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -250,7 +256,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-// ======================================================= Przycisk: Wyślij wiadomość
+              // ======================================================= Przycisk: Wyślij wiadomość
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -265,7 +271,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-// ======================================================= Przycisk: Pobierz wiadomość
+              // ======================================================= Przycisk: Pobierz wiadomość
               SizedBox(
                 width: double.infinity,
                 height: 52,

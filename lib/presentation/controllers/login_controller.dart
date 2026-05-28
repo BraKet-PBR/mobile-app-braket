@@ -11,7 +11,6 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_app_braket/core/usecases/api_url_storage.dart';
 
 class LoginController extends ControllerBase {
-
   final TokenProvider tokenProvider;
   final formKey = GlobalKey<FormState>();
   final LoginService loginService;
@@ -19,17 +18,28 @@ class LoginController extends ControllerBase {
 
   final ApiUrlStorage _apiUrlStorage;
   final Dio _dio;
+  final Dio? _qkdSimulatorDio;
   final TextEditingController apiUrlController = TextEditingController();
 
   String? apiUrl;
-  late RegExp apiUrlRegex = RegExp(r'(https:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)(:\d+)?');
+  late RegExp apiUrlRegex = RegExp(
+    r'(https:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)(:\d+)?',
+  );
 
   bool isBusy = false;
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  LoginController({required this.tokenProvider, required this.loginService, required ApiUrlStorage apiUrlStorage, required Dio dio}) : _apiUrlStorage = apiUrlStorage, _dio = dio;
+  LoginController({
+    required this.tokenProvider,
+    required this.loginService,
+    required ApiUrlStorage apiUrlStorage,
+    required Dio dio,
+    Dio? qkdSimulatorDio,
+  }) : _apiUrlStorage = apiUrlStorage,
+       _dio = dio,
+       _qkdSimulatorDio = qkdSimulatorDio;
 
   @override
   void onInit() {
@@ -38,16 +48,18 @@ class LoginController extends ControllerBase {
   }
 
   Future<void> _loadSavedApiUrl() async {
-    try{
+    try {
       final saved = await _apiUrlStorage.getApiUrl();
       if (saved != null && saved.isNotEmpty) {
         apiUrl = saved;
         apiUrlController.text = saved;
         _dio.options.baseUrl = saved;
+        _qkdSimulatorDio?.options.baseUrl = saved;
       }
     } catch (_) {}
   }
 
+  // ignore: unused_element
   void _saveUrl() {
     var url = apiUrlController.text.trim();
     if (url.isEmpty) return;
@@ -56,21 +68,22 @@ class LoginController extends ControllerBase {
     }
     _apiUrlStorage.saveApiUrl(url);
     _dio.options.baseUrl = url;
+    _qkdSimulatorDio?.options.baseUrl = url;
     apiUrl = url;
   }
-
 
   void login() async {
     if (isBusy) {
       return;
     }
 
-    try{
+    try {
       isBusy = true;
-      final isValid = formKey.currentState!.validate(); //binding metod passwordValidator i usernameValidator na ekranie "validator:"
+      final isValid = formKey.currentState!
+          .validate(); //binding metod passwordValidator i usernameValidator na ekranie "validator:"
       Get.focusScope!.unfocus(); //ukrywa klawiaturę
 
-      if(!isValid) {
+      if (!isValid) {
         return;
       }
 
@@ -84,7 +97,7 @@ class LoginController extends ControllerBase {
 
       // _saveUrl();
 
-      if (!await hasInternetConnection()){
+      if (!await hasInternetConnection()) {
         return;
       }
 
@@ -96,7 +109,6 @@ class LoginController extends ControllerBase {
       isBusy = false;
       Get.offAllNamed('/home'); //TODO: delete - bypass logowania tylko na testy
     }
-
   }
 
   Future handleAPIResponse(APIResponse<String> apiResponse) async {
@@ -115,40 +127,36 @@ class LoginController extends ControllerBase {
       return;
     }
 
-    if (apiResponse.statusCode != 200){
-      await handleSomethingWentWrong(AppStrings.loginServerError(apiResponse.statusCode ?? 0));
+    if (apiResponse.statusCode != 200) {
+      await handleSomethingWentWrong(
+        AppStrings.loginServerError(apiResponse.statusCode ?? 0),
+      );
       return;
     }
 
     await tokenProvider.saveToken(apiResponse.body!);
 
     clearLoginFields();
-
+    // ignore: avoid_print
     print("Username: ${await tokenProvider.getUsername()}"); //TODO: USUNĄĆ
 
     Get.offAllNamed('/home');
   }
 
-
-
-
-
   String? usernameValidator(String? value) {
     const int maxUsernameLen = 250;
-    if (value == null || value == ''){
+    if (value == null || value == '') {
       return AppStrings.usernameEmpty;
     }
     if (value.length > maxUsernameLen) {
       return AppStrings.usernameTooLong;
     }
     return null;
-
   }
-
 
   String? passwordValidator(String? value) {
     const int maxPasswordLen = 250;
-    if (value == null || value == ''){
+    if (value == null || value == '') {
       return AppStrings.passwordEmpty;
     }
     if (value.length > maxPasswordLen) {
@@ -156,7 +164,6 @@ class LoginController extends ControllerBase {
     }
     return null;
   }
-
 
   String? apiUrlValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
@@ -172,7 +179,6 @@ class LoginController extends ControllerBase {
     return null;
   }
 
-
   void showInvalidCredentialsError() {
     popup(AppStrings.loginErrorTitle, AppStrings.invalidCredentials);
   }
@@ -181,5 +187,4 @@ class LoginController extends ControllerBase {
     usernameController.clear();
     passwordController.clear();
   }
-
 }

@@ -9,15 +9,12 @@ class ApiUrlStorageImpl implements ApiUrlStorage {
 
   @override
   Future<String?> getApiUrl() async {
-    final url = await _storage.read(key: _key);
-    print('ApiUrlStorageImpl: odczytano apiUrl = $url'); //TODO: delete
-    return url;
+    return await _storage.read(key: _key);
   }
 
   @override
   Future<void> saveApiUrl(String url) async {
     await _storage.write(key: _key, value: url);
-    print('ApiUrlStorageImpl: zapisano apiUrl = $url'); //TODO: delete
   }
 
   @override

@@ -46,7 +46,7 @@ class ControllerBase extends GetxController {
           ),
         ],
       ),
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
   }
 
@@ -69,22 +69,16 @@ class ControllerBase extends GetxController {
           ),
         ],
       ),
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
     return result ?? false;
   }
 
-  void showLoadingPopup({
-    required String title,
-    required String message,
-  }) {
+  void showLoadingPopup({required String title, required String message}) {
     Get.dialog(
-      _CyberLoadingDialog(
-        title: title,
-        message: message,
-      ),
+      _CyberLoadingDialog(title: title, message: message),
       barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
   }
 
@@ -109,7 +103,7 @@ class ControllerBase extends GetxController {
             ),
           ],
         ),
-        barrierColor: Colors.black.withOpacity(0.7),
+        barrierColor: Colors.black.withValues(alpha: 0.7),
       );
       return false;
     }
@@ -119,12 +113,11 @@ class ControllerBase extends GetxController {
 
   Future<bool> hasInternetConnectionNoDialog() async {
     var connectivityResult = await connectivity.checkConnectivity();
-    return connectivityResult.contains(ConnectivityResult.ethernet)
-        || connectivityResult.contains(ConnectivityResult.mobile)
-        || connectivityResult.contains(ConnectivityResult.wifi);
+    return connectivityResult.contains(ConnectivityResult.ethernet) ||
+        connectivityResult.contains(ConnectivityResult.mobile) ||
+        connectivityResult.contains(ConnectivityResult.wifi);
   }
 }
-
 
 class _CyberDialog extends StatelessWidget {
   final String title;
@@ -158,7 +151,6 @@ class _CyberDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             // Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -167,7 +159,9 @@ class _CyberDialog extends StatelessWidget {
                 border: Border(
                   bottom: BorderSide(color: AppColors.border, width: 1),
                 ),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(7)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(7),
+                ),
               ),
               child: Row(
                 children: [
@@ -273,15 +267,11 @@ class _CyberDialogButton extends StatelessWidget {
   }
 }
 
-
 class _CyberLoadingDialog extends StatelessWidget {
   final String title;
   final String message;
 
-  const _CyberLoadingDialog({
-    required this.title,
-    required this.message,
-  });
+  const _CyberLoadingDialog({required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -292,30 +282,20 @@ class _CyberLoadingDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 320),
         decoration: BoxDecoration(
           color: AppColors.surface_elevated,
-          border: Border.all(
-            color: AppColors.border,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.border, width: 1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             // Header
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 border: Border(
-                  bottom: BorderSide(
-                    color: AppColors.border,
-                    width: 1,
-                  ),
+                  bottom: BorderSide(color: AppColors.border, width: 1),
                 ),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(7),
@@ -323,11 +303,7 @@ class _CyberLoadingDialog extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.sync,
-                    color: AppColors.white54,
-                    size: 15,
-                  ),
+                  const Icon(Icons.sync, color: AppColors.white54, size: 15),
                   const SizedBox(width: 8),
                   Text(
                     title.toUpperCase(),
@@ -347,15 +323,12 @@ class _CyberLoadingDialog extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-
                   const SizedBox(
                     width: 36,
                     height: 36,
                     child: CircularProgressIndicator(
                       strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors.red,
-                      ),
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.red),
                     ),
                   ),
 
