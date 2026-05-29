@@ -70,7 +70,7 @@ class PullMessageController extends ControllerBase {
       if (response.statusCode == 404) {
           await popup(AppStrings.pullNoMessagesTitle, AppStrings.pullNoMessagesMessage);
           return;
-      } 
+      }
 
       if (response.statusCode != 200 || response.body == null) {
         await popup(AppStrings.pullUnexpectedErrorTitle, AppStrings.pullMessageFailed);
@@ -79,12 +79,15 @@ class PullMessageController extends ControllerBase {
 
       bool isSignatureValid = false;
       try {
-        isSignatureValid = await mayoService.validateSignature(
-          response.body!.ciphertext,
-          response.body!.mayoSignature,
+        isSignatureValid = await mayoService.validateMessagePayloadSignature(
+          sessionId: sessionId,
+          ciphertext: response.body!.ciphertext,
+          messageNonce: response.body!.messageNonce,
+          algorithm: response.body!.algorithm,
+          signature: response.body!.mayoSignature,
         );
       } catch (error) {
-        await popup(AppStrings.error, AppStrings.pullNoMayoPeerKey);
+        await popup(AppStrings.error, AppStrings.mayoVerificationError);
         return;
       }
 

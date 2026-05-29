@@ -77,11 +77,18 @@ class MessageController extends ControllerBase {
         return;
       }
 
+      const algorithm = 'AES';
+
       String mayoSignature;
       try {
-        mayoSignature = await mayoService.signCiphertext(encryptionResult.ciphertext);
+        mayoSignature = await mayoService.signMessagePayload(
+          sessionId: sessionId,
+          ciphertext: encryptionResult.ciphertext,
+          messageNonce: encryptionResult.messageNonce,
+          algorithm: algorithm,
+        );
       } catch (error) {
-        await popup(AppStrings.qkdNoMayoKeyTitle, AppStrings.qkdNoMayoKeyMessage);
+        await popup(AppStrings.error, AppStrings.mayoError);
         return;
       }
 
@@ -96,7 +103,7 @@ class MessageController extends ControllerBase {
           ciphertext: encryptionResult.ciphertext,
           messageNonce: encryptionResult.messageNonce,
           mayoSignature: mayoSignature,
-          algorithm: 'AES', // Hardcode, to jest okej ponieważ nie ma wyboru algorytmu na ten moment, może będzie kiedyś więc zostawiam
+          algorithm: algorithm,
         ),
       );
 
