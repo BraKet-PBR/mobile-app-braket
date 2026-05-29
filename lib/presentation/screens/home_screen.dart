@@ -58,6 +58,17 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            tooltip: 'Test MAYO',
+            icon: const Icon(
+              Icons.security,
+              color: AppColors.white54,
+              size: 20,
+            ),
+            onPressed: () async {
+              await controller.runMayoSmokeTest();
+            },
+          ),
+          IconButton(
             icon: const Icon(
               Icons.logout,
               color: AppColors.white54,
@@ -111,12 +122,7 @@ class HomeScreen extends StatelessWidget {
                   FutureBuilder<String?>(
                     future: tokenProvider.getUsername(),
                     builder: (context, snapshot) {
-                      // final username = snapshot.data; //TODO: odkomentować
-                      final username = "Mikołaj"; //TODO: usunąć
-
-                      if (username == null) {
-                        return const SizedBox.shrink();
-                      }
+                      final username = snapshot.data ?? "Mikołaj"; //TODO: usunąć fallback
 
                       return Column(
                         children: [

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
+import 'package:mobile_app_braket/core/cryptoServices/mayo_native.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_service.dart';
 import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
@@ -41,6 +43,49 @@ class QkdSessionController extends ControllerBase {
 
   bool isPolling = false;
   bool isBusy = false;
+
+  Future<void> runMayoSmokeTest() async {
+    try {
+      final mayo = MayoNative.instance;
+      final keyPair = await mayo.generateKeyPair();
+      final message = Uint8List.fromList(utf8.encode('MAYO app test'));
+
+      final signature = await mayo.sign(
+        message: message,
+        privateKey: keyPair.privateKey,
+      );
+
+      final originalValid = await mayo.verify(
+        message: message,
+        signature: signature,
+        publicKey: keyPair.publicKey,
+      );
+
+      final changedMessage = Uint8List.fromList(
+        utf8.encode('MAYO app test changed'),
+      );
+
+      final changedValid = await mayo.verify(
+        message: changedMessage,
+        signature: signature,
+        publicKey: keyPair.publicKey,
+      );
+
+      final passed = originalValid && !changedValid;
+      final result = [
+        'Wynik: ${passed ? "PASSED" : "FAILED"}',
+        'Klucz publiczny: ${keyPair.publicKey.length} B',
+        'Klucz prywatny: ${keyPair.privateKey.length} B',
+        'Podpis: ${signature.length} B',
+        'Oryginalna wiadomosc poprawna: ${originalValid ? "TAK" : "NIE"}',
+        'Zmieniona wiadomosc odrzucona: ${!changedValid ? "TAK" : "NIE"}',
+      ].join('\n');
+
+      await popup('Test MAYO', result);
+    } catch (e) {
+      await popup('Test MAYO', 'Nie udalo sie uruchomic testu MAYO.\n$e');
+    }
+  }
 
 
   Future<void> joinOrStartSession() async {
@@ -222,7 +267,7 @@ class QkdSessionController extends ControllerBase {
     await qkdStorage.clear();
     await aesStorage.clear();
     await mayoStorage.clear();
-  
+
 
     otherUserId.value = '';
     otherUsername.value = '';

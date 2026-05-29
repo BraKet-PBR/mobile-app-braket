@@ -47,6 +47,14 @@ Uruchom aplikację w przeglądarce Chrome:
 flutter run -d chrome
 ```
 
+## MAYO na platformach
+
+Aplikacja używa MAYO do podpisywania szyfrogramów i weryfikacji podpisów po odebraniu wiadomości.
+
+- Android korzysta z bibliotek `liboqs.so` dodanych w `android/app/src/main/jniLibs`.
+- Windows korzysta z `native/liboqs/bin/oqs.dll`.
+- Web korzysta z lokalnego mostka `web/mayo_oqs_web.js` i plików `web/liboqs-js`.
+
 
 
 

@@ -83,6 +83,9 @@ class AppStrings {
   static const String encyrptionError = "Nie udało się zaszyfrować wiadomości.";
   static const String nonceError = "Nie udało się wygenerować nonce.";
   static const String mayoError = "Nie udało się podpisać wiadomości.";
+  static const String mayoVerificationError = "Nie udało się zweryfikować podpisu Mayo.";
+  static const String mayoPeerPublicKeyMissing = "Nie znaleziono klucza publicznego Mayo peera w local storage.";
+  static const String mayoPrivateKeyMissing = "Nie znaleziono klucza prywatnego Mayo w local storage.";
 
   // pull_message_controller.dart
   static const String pullNoSessionTitle = "Brak sesji";

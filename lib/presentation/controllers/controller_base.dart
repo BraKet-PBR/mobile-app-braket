@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
+import 'package:mobile_app_braket/core/platform/network_error.dart';
 import 'package:mobile_app_braket/core/theme/app_colors.dart';
 
 class ControllerBase extends GetxController {
@@ -18,8 +18,9 @@ class ControllerBase extends GetxController {
           error.type == DioExceptionType.sendTimeout ||
           error.type == DioExceptionType.receiveTimeout) {
         message = AppStrings.requestFailed;
-      } else if (error.type == DioExceptionType.unknown &&
-          error.error is SocketException) {
+      } else if (error.type == DioExceptionType.connectionError ||
+          (error.type == DioExceptionType.unknown &&
+              isSocketException(error.error))) {
         message = AppStrings.requestFailed;
       } else {
         message = AppStrings.somethingWentWrong;
@@ -46,7 +47,7 @@ class ControllerBase extends GetxController {
           ),
         ],
       ),
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
   }
 
@@ -69,7 +70,7 @@ class ControllerBase extends GetxController {
           ),
         ],
       ),
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
     return result ?? false;
   }
@@ -89,7 +90,7 @@ class ControllerBase extends GetxController {
             ),
           ],
         ),
-        barrierColor: Colors.black.withOpacity(0.7),
+        barrierColor: Colors.black.withValues(alpha: 0.7),
       );
       return false;
     }
