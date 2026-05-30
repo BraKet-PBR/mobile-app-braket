@@ -11,6 +11,7 @@ import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 import 'package:mobile_app_braket/core/usecases/mayo_storage.dart';
 import 'package:mobile_app_braket/core/usecases/qkd_session_storage.dart';
 import 'package:mobile_app_braket/domain/external_services/qkd_session_service.dart';
+import 'package:mobile_app_braket/domain/external_services/qkd_simulator_service.dart';
 import 'package:mobile_app_braket/domain/models/dtos/join_session_dto.dart';
 import 'package:mobile_app_braket/presentation/controllers/controller_base.dart';
 
@@ -20,6 +21,7 @@ class QkdSessionController extends ControllerBase {
   final AESKeyStorage aesKeyStorage;
   final MayoStorage mayoStorage;
   final MayoService mayoService;
+  final QkdSimulatorService qkdSimulatorService;
 
   QkdSessionController({
     required this.qkdSessionService,
@@ -27,6 +29,7 @@ class QkdSessionController extends ControllerBase {
     required this.aesKeyStorage,
     required this.mayoStorage,
     required this.mayoService,
+    required this.qkdSimulatorService,
   });
 
   final RxString otherUserId = ''.obs;
@@ -43,49 +46,6 @@ class QkdSessionController extends ControllerBase {
 
   bool isPolling = false;
   bool isBusy = false;
-
-  Future<void> runMayoSmokeTest() async {
-    try {
-      final mayo = MayoNative.instance;
-      final keyPair = await mayo.generateKeyPair();
-      final message = Uint8List.fromList(utf8.encode('MAYO app test'));
-
-      final signature = await mayo.sign(
-        message: message,
-        privateKey: keyPair.privateKey,
-      );
-
-      final originalValid = await mayo.verify(
-        message: message,
-        signature: signature,
-        publicKey: keyPair.publicKey,
-      );
-
-      final changedMessage = Uint8List.fromList(
-        utf8.encode('MAYO app test changed'),
-      );
-
-      final changedValid = await mayo.verify(
-        message: changedMessage,
-        signature: signature,
-        publicKey: keyPair.publicKey,
-      );
-
-      final passed = originalValid && !changedValid;
-      final result = [
-        'Wynik: ${passed ? "PASSED" : "FAILED"}',
-        'Klucz publiczny: ${keyPair.publicKey.length} B',
-        'Klucz prywatny: ${keyPair.privateKey.length} B',
-        'Podpis: ${signature.length} B',
-        'Oryginalna wiadomosc poprawna: ${originalValid ? "TAK" : "NIE"}',
-        'Zmieniona wiadomosc odrzucona: ${!changedValid ? "TAK" : "NIE"}',
-      ].join('\n');
-
-      await popup('Test MAYO', result);
-    } catch (e) {
-      await popup('Test MAYO', 'Nie udalo sie uruchomic testu MAYO.\n$e');
-    }
-  }
 
 
   Future<void> joinOrStartSession() async {
@@ -105,6 +65,17 @@ class QkdSessionController extends ControllerBase {
 
     try {
       if (!await hasInternetConnection()) return;
+
+      //TODO tutaj wywołanie symulatora qkd
+      final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
+      if (response_simulator.statusCode != 200 || response_simulator.body == null || response_simulator.body!.keyMaterial.isEmpty) {
+        await popup(
+          AppStrings.qkdUnexpectedErrorTitle,
+          AppStrings.qkdSimulatorError,
+        );
+        return;
+      }
+      aesKeyStorage.saveKey(response_simulator.body!.keyMaterial);
 
       final storedKey = await aesKeyStorage.getKey();
       if (storedKey == null || storedKey.isEmpty) {
@@ -302,5 +273,50 @@ class QkdSessionController extends ControllerBase {
     if (expiresAt != null && DateTime.now().isAfter(expiresAt)) return false;
 
     return status.isNotEmpty;
+  }
+
+
+
+  Future<void> runMayoSmokeTest() async {
+    try {
+      final mayo = MayoNative.instance;
+      final keyPair = await mayo.generateKeyPair();
+      final message = Uint8List.fromList(utf8.encode('MAYO app test'));
+
+      final signature = await mayo.sign(
+        message: message,
+        privateKey: keyPair.privateKey,
+      );
+
+      final originalValid = await mayo.verify(
+        message: message,
+        signature: signature,
+        publicKey: keyPair.publicKey,
+      );
+
+      final changedMessage = Uint8List.fromList(
+        utf8.encode('MAYO app test changed'),
+      );
+
+      final changedValid = await mayo.verify(
+        message: changedMessage,
+        signature: signature,
+        publicKey: keyPair.publicKey,
+      );
+
+      final passed = originalValid && !changedValid;
+      final result = [
+        'Wynik: ${passed ? "PASSED" : "FAILED"}',
+        'Klucz publiczny: ${keyPair.publicKey.length} B',
+        'Klucz prywatny: ${keyPair.privateKey.length} B',
+        'Podpis: ${signature.length} B',
+        'Oryginalna wiadomosc poprawna: ${originalValid ? "TAK" : "NIE"}',
+        'Zmieniona wiadomosc odrzucona: ${!changedValid ? "TAK" : "NIE"}',
+      ].join('\n');
+
+      await popup('Test MAYO', result);
+    } catch (e) {
+      await popup('Test MAYO', 'Nie udalo sie uruchomic testu MAYO.\n$e');
+    }
   }
 }
