@@ -110,6 +110,7 @@ class AppStrings {
   static const String qkdNoKeyMessage = "Nie znaleziono klucza AES w secure local storage.";
   static const String qkdNoMayoKeyTitle = "Brak klucza Mayo";
   static const String qkdNoMayoKeyMessage = "Nie znaleziono klucza prywatnego Mayo";
+  static const String qkdSimulatorError = "Nie udało się uzyskać klucza AES z symulatora QKD.";
 
 
 
