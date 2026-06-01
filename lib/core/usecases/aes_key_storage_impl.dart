@@ -4,7 +4,6 @@ import 'package:mobile_app_braket/core/usecases/aes_key_storage.dart';
 class AESKeyStorageImpl implements AESKeyStorage {
   final FlutterSecureStorage _storage;
 
-  //TODO: to do pobrania jakoś z symulatora qkd
   static const _aesKeyStorageKey = 'aes_encryption_key';
 
   AESKeyStorageImpl(this._storage);

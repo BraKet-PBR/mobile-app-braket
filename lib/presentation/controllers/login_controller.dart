@@ -76,13 +76,12 @@ class LoginController extends ControllerBase {
 
       formKey.currentState!.save();
 
-      //TODO: odkomentować
-      // if (apiUrlController.text.trim().isEmpty) {
-      //   await popup(AppStrings.error, AppStrings.apiUrlEmpty);
-      //   return;
-      // }
+      if (apiUrlController.text.trim().isEmpty) {
+        await popup(AppStrings.error, AppStrings.apiUrlEmpty);
+        return;
+      }
 
-      // _saveUrl();
+      _saveUrl();
 
       if (!await hasInternetConnection()){
         return;
@@ -94,7 +93,7 @@ class LoginController extends ControllerBase {
       await handleSomethingWentWrong(error);
     } finally {
       isBusy = false;
-      Get.offAllNamed('/home'); //TODO: delete - bypass logowania tylko na testy
+      //Get.offAllNamed('/home'); //TODO: delete - bypass logowania tylko na testy
     }
 
   }
@@ -124,7 +123,7 @@ class LoginController extends ControllerBase {
 
     clearLoginFields();
 
-    print("Username: ${await tokenProvider.getUsername()}"); //TODO: USUNĄĆ
+    // print("Username: ${await tokenProvider.getUsername()}"); //TODO: USUNĄĆ
 
     Get.offAllNamed('/home');
   }

@@ -33,9 +33,9 @@ class MessageController extends ControllerBase {
   Future<void> sendMessage(String plaintext) async {
 
     // ========================= TODO: usunąć
-    messageId.value = "6d165395-a472-4ff6-8b26-6c86954f18be";
-    expiresAt.value = "DateTime";
-    sendStatus.value = "Pending";
+    // messageId.value = "6d165395-a472-4ff6-8b26-6c86954f18be";
+    // expiresAt.value = "DateTime";
+    // sendStatus.value = "Pending";
     // ========================= TODO: usunąć
 
     if (isBusy.value) {

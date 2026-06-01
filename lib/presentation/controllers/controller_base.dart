@@ -75,6 +75,27 @@ class ControllerBase extends GetxController {
     return result ?? false;
   }
 
+  void showLoadingPopup({
+    required String title,
+    required String message,
+  }) {
+    Get.dialog(
+      _CyberLoadingDialog(
+        title: title,
+        message: message,
+      ),
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.7),
+    );
+  }
+
+  void hideLoadingPopup() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+  }
+
+
   Future<bool> hasInternetConnection() async {
     if (!await hasInternetConnectionNoDialog()) {
       await Get.dialog(
@@ -248,6 +269,114 @@ class _CyberDialogButton extends StatelessWidget {
             letterSpacing: 1.5,
             fontFamily: 'monospace',
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CyberLoadingDialog extends StatelessWidget {
+  final String title;
+  final String message;
+
+  const _CyberLoadingDialog({
+    required this.title,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 320),
+        decoration: BoxDecoration(
+          color: AppColors.surface_elevated,
+          border: Border.all(
+            color: AppColors.border,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.border,
+                    width: 1,
+                  ),
+                ),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(7),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.sync,
+                    color: AppColors.white54,
+                    size: 15,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    title.toUpperCase(),
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'monospace',
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+
+                  const SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.red,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.white70,
+                      fontSize: 13,
+                      fontFamily: 'monospace',
+                      height: 1.6,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

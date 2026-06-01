@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app_braket/core/localization/app_strings.dart';
 import 'package:mobile_app_braket/core/cryptoServices/mayo_native.dart';
@@ -51,12 +52,12 @@ class QkdSessionController extends ControllerBase {
   Future<void> joinOrStartSession() async {
 
     // ========================= TODO: usunąć
-    otherUserId.value = "cdcd3280-fb85-4175-9778-3a6f8bc2606c";
-    otherUsername.value = "Andrzej";
-    sessionStatus.value = "waiting_peer";
-    final testExpiry = DateTime.now().add(const Duration(minutes: 1));
-    sessionExpiresAt.value = testExpiry;
-    _startCountdown();
+    // otherUserId.value = "cdcd3280-fb85-4175-9778-3a6f8bc2606c";
+    // otherUsername.value = "Andrzej";
+    // sessionStatus.value = "waiting_peer";
+    // final testExpiry = DateTime.now().add(const Duration(minutes: 1));
+    // sessionExpiresAt.value = testExpiry;
+    // _startCountdown();
     // ========================= TODO: usunąć
 
     if (isBusy) return;
@@ -66,16 +67,30 @@ class QkdSessionController extends ControllerBase {
     try {
       if (!await hasInternetConnection()) return;
 
-      //TODO tutaj wywołanie symulatora qkd
-      final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
-      if (response_simulator.statusCode != 200 || response_simulator.body == null || response_simulator.body!.keyMaterial.isEmpty) {
-        await popup(
-          AppStrings.qkdUnexpectedErrorTitle,
-          AppStrings.qkdSimulatorError,
-        );
-        return;
+      // ======================================================= Symulator QKD
+      showLoadingPopup(
+        title: AppStrings.qkdString,
+        message: AppStrings.qdkSessionInProgress,
+      );
+
+      try {
+        final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
+        if (response_simulator.statusCode != 200 || response_simulator.body == null) {
+          await popup(
+            AppStrings.qkdUnexpectedErrorTitle,
+            AppStrings.qkdSimulatorError,
+          );
+        }
+
+        aesKeyStorage.saveKey(response_simulator.body!.keyMaterial);
+
+      } on DioException catch (e) {
+        await handleSomethingWentWrong(e);
+      } finally {
+        hideLoadingPopup();
       }
-      aesKeyStorage.saveKey(response_simulator.body!.keyMaterial);
+
+      
 
       final storedKey = await aesKeyStorage.getKey();
       if (storedKey == null || storedKey.isEmpty) {
@@ -122,8 +137,10 @@ class QkdSessionController extends ControllerBase {
       }
     } catch (e) {
       await handleSomethingWentWrong(e);
+      hideLoadingPopup();
     } finally {
       isBusy = false;
+      hideLoadingPopup();
     }
   }
 

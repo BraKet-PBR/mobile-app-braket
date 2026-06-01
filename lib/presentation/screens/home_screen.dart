@@ -122,13 +122,13 @@ class HomeScreen extends StatelessWidget {
                   FutureBuilder<String?>(
                     future: tokenProvider.getUsername(),
                     builder: (context, snapshot) {
-                      final username = snapshot.data ?? "Mikołaj"; //TODO: usunąć fallback
+                      final username = snapshot.data;
 
                       return Column(
                         children: [
                           _InfoRow(
                             label: AppStrings.loggedInAs,
-                            value: username,
+                            value: username ?? '',
                             valueColor: AppColors.white,
                           ),
 
