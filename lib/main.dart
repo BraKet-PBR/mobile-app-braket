@@ -58,8 +58,21 @@ Future<void> main() async {
     ),
   );
 
+
+  // Generowanie klucza qkd na symulatorze trwa około 90 sekund
+  // Dopiero wtedy endpoint odpowie stąd wydłużenie czasu
+  final dio_sim = Dio(
+    BaseOptions(
+      baseUrl: '',
+      connectTimeout: const Duration(seconds: 120),
+      receiveTimeout: const Duration(seconds: 120),
+    ),
+  );
+
+
   Get.put<FlutterSecureStorage>(storage);
   Get.put<Dio>(dio);
+  Get.put<Dio>(dio_sim);
 
   Get.put<ApiUrlStorage>(
     ApiUrlStorageImpl(storage),
@@ -100,7 +113,7 @@ Future<void> main() async {
 
    Get.put<QkdSimulatorService>(
     QkdSimulatorServiceImpl(
-      dio,
+      dio_sim,
       tokenProvider: Get.find<TokenProvider>(),
     ),
   );

@@ -111,6 +111,8 @@ class AppStrings {
   static const String qkdNoMayoKeyTitle = "Brak klucza Mayo";
   static const String qkdNoMayoKeyMessage = "Nie znaleziono klucza prywatnego Mayo";
   static const String qkdSimulatorError = "Nie udało się uzyskać klucza AES z symulatora QKD.";
+  static const String qdkSessionInProgress = 'Trwa generowanie klucza AES przez symulator QKD.\n\n Czynność potrwa około 90 sekund.\n\n W trakcie jej trwania musisz pozostać na tym ekranie.';
+  static const String qkdString = "QKD";
 
 
 

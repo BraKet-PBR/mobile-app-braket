@@ -6,7 +6,6 @@ class MessageStatusServiceImpl implements MessageStatusService {
   @override
   Future<APIResponse<MessageStatusResponseDto>> checkMessageStatus(String messageId) {
       throw UnimplementedError();
-      //TODO: czy wgl będziemy robić sprawdzanie statusu wiadomości???
   }
 
 
