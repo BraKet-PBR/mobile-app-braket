@@ -19,6 +19,7 @@ class LoginController extends ControllerBase {
 
   final ApiUrlStorage _apiUrlStorage;
   final Dio _dio;
+  final Dio _qkdDio;
   final TextEditingController apiUrlController = TextEditingController();
 
   String? apiUrl;
@@ -29,7 +30,7 @@ class LoginController extends ControllerBase {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  LoginController({required this.tokenProvider, required this.loginService, required ApiUrlStorage apiUrlStorage, required Dio dio}) : _apiUrlStorage = apiUrlStorage, _dio = dio;
+  LoginController({required this.tokenProvider, required this.loginService, required ApiUrlStorage apiUrlStorage, required Dio dio, required Dio qkdDio}) : _apiUrlStorage = apiUrlStorage, _dio = dio, _qkdDio = qkdDio;
 
   @override
   void onInit() {
@@ -44,6 +45,7 @@ class LoginController extends ControllerBase {
         apiUrl = saved;
         apiUrlController.text = saved;
         _dio.options.baseUrl = saved;
+        _qkdDio.options.baseUrl = saved;
       }
     } catch (_) {}
   }
@@ -56,6 +58,7 @@ class LoginController extends ControllerBase {
     }
     _apiUrlStorage.saveApiUrl(url);
     _dio.options.baseUrl = url;
+    _qkdDio.options.baseUrl = url;
     apiUrl = url;
   }
 

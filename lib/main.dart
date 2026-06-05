@@ -82,6 +82,7 @@ Future<void> main() async {
   final savedApiUrl = await apiUrlStorage.getApiUrl();
   if (savedApiUrl != null && savedApiUrl.isNotEmpty) {
     dio.options.baseUrl = savedApiUrl;
+    dio_sim.options.baseUrl = savedApiUrl;
   }
 
 
@@ -140,6 +141,7 @@ Future<void> main() async {
       loginService: Get.find<LoginService>(),
       apiUrlStorage: Get.find<ApiUrlStorage>(),
       dio: Get.find<Dio>(),
+      qkdDio: dio_sim,
     ),
   );
 

@@ -7,9 +7,10 @@ class QkdSimulatorServiceImpl extends APIServiceBase implements QkdSimulatorServ
   QkdSimulatorServiceImpl(super.dio, {super.tokenProvider});
 
   @override
-  Future<APIResponse<QkdSimulatorResponseDto>> getAesKeyFromQkd() {
-    return getAndDeserialize(
+  Future<APIResponse<QkdSimulatorResponseDto>> getAesKeyFromQkd(String mode) {
+    return postAndDeserialize(
       "/api/qkd/generate",
+      {"mode": mode},
       (json) => QkdSimulatorResponseDto.fromJson(json)
     );
   }

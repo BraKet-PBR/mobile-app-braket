@@ -25,5 +25,13 @@ class QkdSessionServiceImpl extends APIServiceBase implements QkdSessionService{
     );
   }
 
+  @override
+  Future<APIResponse<QkdSessionResponseDto>> getCurrentSession() {
+    return getAndDeserialize(
+      "/api/qkdsessions/current",
+      (json) => QkdSessionResponseDto.fromJson(json)
+    );
+  }
+
   
 }

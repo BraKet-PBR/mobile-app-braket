@@ -33,10 +33,17 @@ class QkdSessionController extends ControllerBase {
     required this.qkdSimulatorService,
   });
 
+  @override
+  void onInit() {
+    super.onInit();
+    unawaited(restoreLocalSession());
+  }
+
   final RxString otherUserId = ''.obs;
   final RxString otherUsername = ''.obs;
   final RxString sessionStatus = ''.obs;
   final RxString sessionExpiryText = ''.obs;
+  final RxBool useSimulatedQkd = false.obs;
 
   final Rx<DateTime?> sessionExpiresAt = Rx<DateTime?>(null);
 
@@ -47,6 +54,14 @@ class QkdSessionController extends ControllerBase {
 
   bool isPolling = false;
   bool isBusy = false;
+  bool _isPollingRequestInFlight = false;
+
+  String get selectedQkdMode => useSimulatedQkd.value ? 'sim' : 'mock';
+
+  void setQkdMode(bool simulated) {
+    if (isSessionActive || isBusy) return;
+    useSimulatedQkd.value = simulated;
+  }
 
 
   Future<void> joinOrStartSession() async {
@@ -74,15 +89,23 @@ class QkdSessionController extends ControllerBase {
       );
 
       try {
-        final response_simulator = await qkdSimulatorService.getAesKeyFromQkd();
-        if (response_simulator.statusCode != 200 || response_simulator.body == null) {
+        final response_simulator = await qkdSimulatorService.getAesKeyFromQkd(
+          selectedQkdMode,
+        );
+        if (
+          response_simulator.statusCode != 200 ||
+          response_simulator.body == null ||
+          response_simulator.body!.status.toLowerCase() != 'available' ||
+          response_simulator.body!.keyMaterial.isEmpty
+        ) {
           await popup(
             AppStrings.qkdUnexpectedErrorTitle,
             AppStrings.qkdSimulatorError,
           );
+          return;
         }
 
-        aesKeyStorage.saveKey(response_simulator.body!.keyMaterial);
+        await aesKeyStorage.saveKey(response_simulator.body!.keyMaterial);
 
       } on DioException catch (e) {
         await handleSomethingWentWrong(e);
@@ -112,7 +135,20 @@ class QkdSessionController extends ControllerBase {
         JoinSessionDto(keyHash: keyHash, mayoKey: mayoPublicSelfKey),
       );
 
-      if (response.statusCode != 200 || response.body == null) {
+      if (response.error != null) {
+        await handleSomethingWentWrong(response.error);
+        return;
+      }
+
+      if (response.statusCode == 200 && response.body == null) {
+        await popup(
+          AppStrings.qkdUnexpectedErrorTitle,
+          'Serwer utworzył sesję, ale aplikacja nie odczytała odpowiedzi.',
+        );
+        return;
+      }
+
+      if (response.statusCode != 200) {
         await popup(
           AppStrings.qkdUnexpectedErrorTitle,
           AppStrings.qkdJoinOrCreateSessionFailed,
@@ -130,10 +166,12 @@ class QkdSessionController extends ControllerBase {
 
       _startCountdown();
 
-      if (response.body!.status.toLowerCase() == 'waiting_peer') {
-        _startPolling();
-      } else {
+      _startPolling();
+
+      if (response.body!.status.toLowerCase() == 'active') {
         await fetchOtherUser();
+      } else {
+        _clearPeer();
       }
     } catch (e) {
       await handleSomethingWentWrong(e);
@@ -149,7 +187,10 @@ class QkdSessionController extends ControllerBase {
   Future<void> fetchOtherUser() async {
     final response = await qkdSessionService.getOtherSessionUser();
 
-    if (response.statusCode == 404) return;
+    if (response.statusCode == 404) {
+      _clearPeer();
+      return;
+    }
     if (response.statusCode != 200 || response.body == null) return;
 
     otherUserId.value = response.body!.userId;
@@ -158,8 +199,61 @@ class QkdSessionController extends ControllerBase {
     if (response.body!.mayoKey.isNotEmpty) {
       await mayoStorage.saveMayoPublicPeer(response.body!.mayoKey);
     }
+  }
 
-    _stopPolling();
+
+
+  Future<void> refreshCurrentSession() async {
+    final response = await qkdSessionService.getCurrentSession();
+
+    if (response.statusCode == 404) {
+      _clearPeer();
+      sessionStatus.value = '';
+      return;
+    }
+    if (response.statusCode != 200 || response.body == null) return;
+
+    sessionStatus.value = response.body!.status;
+    sessionExpiresAt.value = response.body!.expiresAt;
+
+    await qkdSessionStorage.saveSessionId(response.body!.sessionId);
+    await qkdSessionStorage.saveSessionStatus(response.body!.status);
+    await qkdSessionStorage.saveSessionExpiresAt(response.body!.expiresAt);
+
+    final status = response.body!.status.toLowerCase();
+    if (status == 'active') {
+      await fetchOtherUser();
+      return;
+    }
+
+    _clearPeer();
+
+    if (status == 'expired') {
+      await _expireSession();
+    }
+  }
+
+
+
+  Future<void> restoreLocalSession() async {
+    final savedStatus = await qkdSessionStorage.getSessionStatus();
+    final savedExpiresAt = await qkdSessionStorage.getSessionExpiresAt();
+
+    if (savedStatus == null || savedStatus.isEmpty || savedExpiresAt == null) {
+      return;
+    }
+
+    if (DateTime.now().isAfter(savedExpiresAt)) {
+      await _expireSession();
+      return;
+    }
+
+    sessionStatus.value = savedStatus;
+    sessionExpiresAt.value = savedExpiresAt;
+
+    _startCountdown();
+    _startPolling();
+    await refreshCurrentSession();
   }
 
 
@@ -171,6 +265,8 @@ class QkdSessionController extends ControllerBase {
     _pollTimer?.cancel();
 
     _pollTimer = Timer.periodic(_pollInterval, (_) async {
+      if (_isPollingRequestInFlight) return;
+
       final expiresAt = sessionExpiresAt.value;
 
       if (expiresAt != null && DateTime.now().isAfter(expiresAt)) {
@@ -178,7 +274,12 @@ class QkdSessionController extends ControllerBase {
         return;
       }
 
-      await fetchOtherUser();
+      _isPollingRequestInFlight = true;
+      try {
+        await refreshCurrentSession();
+      } finally {
+        _isPollingRequestInFlight = false;
+      }
     });
   }
 
@@ -188,6 +289,7 @@ class QkdSessionController extends ControllerBase {
     _pollTimer?.cancel();
     _pollTimer = null;
     isPolling = false;
+    _isPollingRequestInFlight = false;
   }
 
 
@@ -248,30 +350,40 @@ class QkdSessionController extends ControllerBase {
     _stopCountdown();
 
 
-    final qkdStorage = Get.find<QkdSessionStorage>();
-    final aesStorage = Get.find<AESKeyStorage>();
-    final mayoStorage = Get.find<MayoStorage>();
-
-    await qkdStorage.clear();
-    await aesStorage.clear();
+    await qkdSessionStorage.clear();
+    await aesKeyStorage.clear();
     await mayoStorage.clear();
 
-
-    otherUserId.value = '';
-    otherUsername.value = '';
+    _clearPeer();
   }
 
 
 
-  void clearSession() {
+  Future<void> clearLocalSession() async {
     _stopPolling();
     _stopCountdown();
 
-    otherUserId.value = '';
-    otherUsername.value = '';
+    _clearPeer();
     sessionStatus.value = '';
     sessionExpiresAt.value = null;
     sessionExpiryText.value = '';
+
+    await qkdSessionStorage.clear();
+    await aesKeyStorage.clear();
+    await mayoStorage.clear();
+  }
+
+
+
+  Future<void> clearSession() async {
+    await clearLocalSession();
+  }
+
+
+
+  void _clearPeer() {
+    otherUserId.value = '';
+    otherUsername.value = '';
   }
 
   @override

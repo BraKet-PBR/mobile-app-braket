@@ -46,8 +46,11 @@ abstract class APIServiceBase {
   Future<APIResponse<T>> postAndDeserialize<T>(String url, Map<String, dynamic> body, T Function(dynamic json) deserialize) async {
     try {
       Options? options = await _getOptionsWithAuthorization();
-      Response<T> response = await dio.post(url, options: options, data: body);
-      return APIResponse(statusCode: response.statusCode, body: deserialize(response.data));
+      final Response response = await dio.post(url, options: options, data: body);
+      return APIResponse<T>(
+        statusCode: response.statusCode,
+        body: deserialize(response.data),
+      );
     } on DioException catch (error) {
       return _handleError(error);
     }
@@ -56,8 +59,8 @@ abstract class APIServiceBase {
   Future<APIResponse<T>> getAndDeserialize<T>(String url, T Function(dynamic json) deserialize) async {
     try {
       Options? options = await _getOptionsWithAuthorization();
-      Response response = await dio.get(url, options: options);
-      return APIResponse(
+      final Response response = await dio.get(url, options: options);
+      return APIResponse<T>(
         statusCode: response.statusCode,
         body: deserialize(response.data)
       );
