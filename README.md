@@ -1,7 +1,9 @@
-# Jak uruchomić projekt
+# Jak uruchomić aplikację Android
 - Aplikacje mobilną na platformę Android można zainstalować z pliku `.apk`. Plik znajduje się w repozytorium Documentation/APK. Należy pobrać go na urządzenie / emulator i zainstalować zgodnie z instrukcjami wyświetlanymi na ekranie. Może być konieczne włączenie opcji instalacji aplikacji z nieznanych źródeł. 
     - https://github.com/BraKet-PBR/Documentation/tree/main/APK
     - Minimalna wymagana wersja systemu to `Android 5`
+
+>Należy pamiętać o tym, że serwer API jest uruchamiany lokalnie. Zaleca się zatem potraktować aplikację android jako tzw "proof of concept", a całą procedurę testową przeprowadzić za pomocą plikacji webowej.
 
 
 # Jak uruchomić projekt jako developer
@@ -18,6 +20,8 @@ Sprawdź konfigurację środowiska:
 flutter doctor
 ```
 
+W razie problemów wskazanych przez ```flutter doctor``` skonsultuj się z dokumentacją Flutter SDK, a by potwierdzić, że twoja instalacja jest prawidłowa.
+
 ## Klonowanie repozytorium + instalacja zależności
 
 ```bash
@@ -26,7 +30,23 @@ git clone https://github.com/BraKet-PBR/mobile-app-braket.git
 flutter pub get
 ```
 
-## Android
+## Uruchomienie projektu na serwerze Flutter - zalecana opcja testowa
+
+> Pamiętaj, że do działania aplikacja potrzebuje aktywnego serwera API.
+
+1. Po sklonowaniu repozytorium oraz instalacji zależności, wpisz w terminalu następującą komendę:
+
+```
+flutter run -d web-server --web-hostname 127.0.0.1 --web-port 8080
+```
+Uruchomi ona aplikację jako web server.
+
+2. Otwórz pierwsze okno przeglądarki, wpisz adres ```http://127.0.0.1:8080``` - uruchomi się wtedy pierwsza instancja aplikacji.
+3. Otwórz drugie okno przeglądarki w trybie **incognito** i wpisz taki sam adres jak w kroku 2 - uruchomi się wtedy druga instancja aplikacji.
+
+Tak uruchomione dwie instancje symulują docelowy use-case, czyli dwóch użytkowników kontaktujących się ze sobą. 
+
+## Uruchomienie projektu na urządzeniu innym niż zalecane
 
 Uruchom emulator Android lub podłącz urządzenie.
 
@@ -42,14 +62,7 @@ Uruchom aplikację:
 flutter run
 ```
 
-
-## Web
-
-Uruchom aplikację w przeglądarce Chrome:
-
-```bash
-flutter run -d chrome
-```
+W przypadku platform innych niż android, upewnij się, że uruchamiasz aplikację z odpowiednią flagą ```-d```. Obecnie jednak aplikacja wspiera tylko system android oraz środowisko WEB.
 
 ## MAYO na platformach
 
@@ -62,13 +75,13 @@ Aplikacja używa MAYO do podpisywania szyfrogramów i weryfikacji podpisów po o
 
 
 
-# Jak działa aplikacja - skrócony poradnik użytkownika
+# Test działania aplikacji - prosty scenariusz testowy
 Sekcja opisuje co dokładnie dzieje się podczas uruchomienia akcji przyciskami dostępnymi w aplikacji.
 
 ## Logowanie
 Logowanie odbywa się poświadczeniami dostarczonymi poprzez Teams. Po poprawnej autentykacji endpoint zwraca JWT Token. Aplikacja zapisuje go w flutter_secure_storage. Token wykorzystywany jest do autentykacji przy zapytaniach na dalsze endpointy.
 
-API URL - przy lokalnym uruchomieniu API ze standardową dostarczoną przez nas konfiguracją adres to xyz (TODO). Istnieje możliwość zmiany adresu API, więcej informacji na ten temat znajduje się w repozytorium link (TODO).
+API URL - przy lokalnym uruchomieniu API ze standardową dostarczoną przez nas konfiguracją adres to ```http://127.0.0.1:6767```. 
 
 ## "Dołącz do sesji"
 1. Pobranie klucza symetrzycznego AES-GCM-256 z symulatora urządzenia QKD. Klucz zapisywany jest lokalnie na urządzeniu za pomocą flutter_secure_storage.
@@ -102,18 +115,18 @@ API URL - przy lokalnym uruchomieniu API ze standardową dostarczoną przez nas 
 6. Na ekranie wyświetlane jest messageId, plaintext, algorithm, createdAt.
 7. Po wyjściu z ekranu wsystkie dane dotyczące wiadomości zostają bezpowrotnie usunięte. 
 
+## Opis zawartości górnego paska aplikacji (od lewej do prawej)
+
+### Toggle switch "mock/sim"
+Pozwala on ustalić, z jakiego trybu generowania klucza AES będzie korzystał użytkownik przed dołączeniem/stworzeniem sesji - domyślnie można wybierać między stałym kluczem testowym, a kluczem wygenerowanym przez opcję "Sim", czyli wbudowany w API symulator kwantowej dystrybucji klucza.
+
+### Ikona tarczy
+Po kliknięciu wyświetla się informacja diagnostyczna na temat działania algorytmu MAYO.
+
+### Ikona wylogowania
+Kończy sesję.
+
 # Dodatkowe informacje
 1. Po wylogowaniu z aplikacji wszystkie dane z flutter_secure_storage zostają bezwporotnie usunięte. 
-
-
-
-
-
-
-
-
-
-
-
 
 `dart run build_runner build`
