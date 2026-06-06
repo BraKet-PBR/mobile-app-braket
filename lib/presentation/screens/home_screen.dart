@@ -57,6 +57,47 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
+          Obx(() {
+            final disabled = controller.isSessionActive || controller.isBusy;
+
+            return Tooltip(
+              message: 'QKD mode',
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'MOCK',
+                    style: TextStyle(
+                      color: controller.useSimulatedQkd.value
+                          ? AppColors.white54
+                          : AppColors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'monospace',
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  Switch(
+                    value: controller.useSimulatedQkd.value,
+                    onChanged: disabled ? null : controller.setQkdMode,
+                    activeColor: AppColors.red,
+                  ),
+                  Text(
+                    'SIM',
+                    style: TextStyle(
+                      color: controller.useSimulatedQkd.value
+                          ? AppColors.white
+                          : AppColors.white54,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'monospace',
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
           IconButton(
             tooltip: 'Test MAYO',
             icon: const Icon(
